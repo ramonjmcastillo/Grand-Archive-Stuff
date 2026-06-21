@@ -332,7 +332,14 @@ const events = [
   }
 ];
 
-function getRegions() {
+function archName(full) {
+  const t = full.split(' ').slice(0,4).join(' ');
+  const map = {
+    "Wind Wind Humans Crux": "Wind Crux Lorraine",
+    "Fire Advent Umbra Ciel": "Fire Oblation Ciel"
+  };
+  return map[t] || t;
+}
   const r = new Set(); events.forEach(e => r.add(e.region)); return [...r].sort();
 }
 
@@ -358,8 +365,8 @@ function renderCharts() {
   events.forEach(e => {
     const w = e.top8.find(p => p.rank === 1);
     if (w) {
-      const simple = w.archetype.split(' ').slice(0,4).join(' ');
-      winnerArch[simple] = (winnerArch[simple] || 0) + 1;
+      const s = archName(w.archetype);
+      winnerArch[s] = (winnerArch[s] || 0) + 1;
     }
   });
   const sortedW = Object.entries(winnerArch).sort((a, b) => b[1] - a[1]);
@@ -367,8 +374,8 @@ function renderCharts() {
   const allArch = {};
   events.forEach(e => {
     e.top8.forEach(p => {
-      const simple = p.archetype.split(' ').slice(0,4).join(' ');
-      allArch[simple] = (allArch[simple] || 0) + 1;
+      const s = archName(p.archetype);
+      allArch[s] = (allArch[s] || 0) + 1;
     });
   });
   const sortedA = Object.entries(allArch).sort((a, b) => b[1] - a[1]).slice(0, 12);
@@ -384,11 +391,11 @@ function renderCharts() {
 
 function renderConversion() {
   const totalPilots = {
-    "Water Aetherwing Diana": 122, "Fire Advent Umbra Ciel": 57, "Water Genbu Mill Guo": 52,
-    "Fire Suzaku Aggro Guo": 48, "Wind Seiryuu Guo Jia": 46, "Wind Wind Humans Crux": 44,
+    "Water Aetherwing Diana": 122, "Wind Crux Lorraine": 71, "Fire Oblation Ciel": 57,
+    "Water Genbu Mill Guo": 52, "Fire Suzaku Aggro Guo": 48, "Wind Seiryuu Guo Jia": 46,
     "Wind Crucible Racoongale Arisanna": 42, "Wind Seiryuu Allies Guo": 39,
-    "Water Fractals Diao Chan": 30, "Fire Slimes Silvie": 28, "Wind Crux Lorraine": 27,
-    "Water Unique Allies Ciel": 27, "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23,
+    "Water Fractals Diao Chan": 30, "Fire Slimes Silvie": 28, "Water Unique Allies Ciel": 27,
+    "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23,
     "Fire Empower Crux Merlin": 22, "Fortuitous Water Exia Jin": 22,
     "Serene Fire Luxem Zander": 19, "Fortuitous Wind Arcane Rai": 19,
     "Serene Wind Astra Arisanna": 18, "Fire Suited Tonoris": 16
@@ -396,7 +403,7 @@ function renderConversion() {
   const top8Counts = {};
   events.forEach(e => {
     e.top8.forEach(p => {
-      const s = p.archetype.split(' ').slice(0,4).join(' ');
+      const s = archName(p.archetype);
       top8Counts[s] = (top8Counts[s] || 0) + 1;
     });
   });
@@ -417,16 +424,16 @@ function renderConversion() {
 function renderRegionalMeta() {
   const regions = {
     "NA": { players: 226, data: {
-      "Water Aetherwing Diana":20,"Fire Suzaku Aggro Guo":15,"Wind Wind Humans Crux":11,"Water Genbu Mill Guo":11,"Fire Advent Umbra Ciel":10,"Wind Crucible Racoongale Arisanna":8,"Wind Seiryuu Allies Guo":7,"Water Fractals Diao Chan":6,"Serene Wind Astra Arisanna":6,"Fortuitous Wind Arcane Rai":6,"Serene Fire Luxem Zander":6,"Fire Suited Tonoris":6,"Fire Slimes Silvie":6,"Water Unique Allies Ciel":5,"Fire Aetherwing Diana":5,"Wind Seiryuu Guo Jia":5,"Wind Allies Lorraine":5,"Wind Crux Lorraine":4,"Fortuitous Water Exia Jin":4,"Wind Allies Tristan":4
+      "Water Aetherwing Diana":20,"Fire Suzaku Aggro Guo":15,"Wind Crux Lorraine":15,"Water Genbu Mill Guo":11,"Fire Oblation Ciel":10,"Wind Crucible Racoongale Arisanna":8,"Wind Seiryuu Allies Guo":7,"Water Fractals Diao Chan":6,"Fortuitous Wind Arcane Rai":6,"Serene Wind Astra Arisanna":6,"Fire Slimes Silvie":6,"Fire Suited Tonoris":6,"Serene Fire Luxem Zander":6,"Wind Allies Lorraine":5,"Fire Aetherwing Diana":5,"Wind Seiryuu Guo Jia":5,"Water Unique Allies Ciel":5,"Wind Allies Tristan":4,"Fortuitous Water Exia Jin":4
     }},
     "EU": { players: 113, data: {
-      "Water Aetherwing Diana":9,"Wind Crucible Racoongale Arisanna":8,"Fire Advent Umbra Ciel":7,"Fire Suzaku Aggro Guo":6,"Fire Slimes Silvie":6,"Wind Seiryuu Allies Guo":5,"Water Unique Allies Ciel":5,"Water Genbu Mill Guo":4,"Fire Aetherwing Diana":4,"Wind Seiryuu Guo Jia":4,"Serene Wind Astra Arisanna":4,"Fire Suited Tonoris":3,"Slimes Silvie":3
+      "Water Aetherwing Diana":9,"Wind Crucible Racoongale Arisanna":8,"Fire Oblation Ciel":7,"Fire Suzaku Aggro Guo":6,"Fire Slimes Silvie":6,"Water Unique Allies Ciel":5,"Wind Seiryuu Allies Guo":5,"Wind Seiryuu Guo Jia":4,"Water Genbu Mill Guo":4,"Wind Crux Lorraine":4,"Fire Aetherwing Diana":4,"Serene Wind Astra Arisanna":4
     }},
     "SEA": { players: 498, data: {
-      "Water Aetherwing Diana":58,"Fire Advent Umbra Ciel":28,"Water Genbu Mill Guo":26,"Wind Wind Humans Crux":24,"Fire Suzaku Aggro Guo":23,"Wind Seiryuu Guo Jia":22,"Wind Crucible Racoongale Arisanna":20,"Water Fractals Diao Chan":18,"Wind Seiryuu Allies Guo":16,"Fire Empower Crux Merlin":15,"Wind Allies Tristan":15,"Wind Crux Lorraine":13,"Fire Aetherwing Diana":11,"Fire Slimes Silvie":10,"Fortuitous Water Exia Jin":9,"Fortuitous Wind Arcane Rai":9,"Wind Wake Up":8,"Serene Fire Luxem Zander":8,"Water Unique Allies Ciel":7,"Fire Suited Tonoris":7
+      "Water Aetherwing Diana":58,"Wind Crux Lorraine":37,"Fire Oblation Ciel":28,"Water Genbu Mill Guo":26,"Fire Suzaku Aggro Guo":23,"Wind Seiryuu Guo Jia":22,"Wind Crucible Racoongale Arisanna":20,"Water Fractals Diao Chan":18,"Wind Seiryuu Allies Guo":16,"Wind Allies Tristan":15,"Fire Empower Crux Merlin":15,"Fire Aetherwing Diana":11,"Fire Slimes Silvie":10,"Fortuitous Water Exia Jin":9,"Fortuitous Wind Arcane Rai":9,"Serene Fire Luxem Zander":8,"Wind Wake Up":8,"Fire Suited Tonoris":7,"Water Unique Allies Ciel":7
     }},
     "Oceania": { players: 221, data: {
-      "Water Aetherwing Diana":35,"Wind Seiryuu Guo Jia":15,"Fire Advent Umbra Ciel":12,"Water Genbu Mill Guo":11,"Wind Seiryuu Allies Guo":11,"Water Unique Allies Ciel":10,"Wind Crux Lorraine":8,"Fortuitous Water Exia Jin":7,"Wind Wind Humans Crux":7,"Serene Water Exia Jin":6,"Wind Crucible Racoongale Arisanna":6,"Fire Slimes Silvie":6
+      "Water Aetherwing Diana":35,"Wind Crux Lorraine":15,"Wind Seiryuu Guo Jia":15,"Fire Oblation Ciel":12,"Water Genbu Mill Guo":11,"Wind Seiryuu Allies Guo":11,"Water Unique Allies Ciel":10,"Fortuitous Water Exia Jin":7,"Fire Slimes Silvie":6,"Wind Crucible Racoongale Arisanna":6,"Serene Water Exia Jin":6,"Water Fractals Diao Chan":5,"Fire Aetherwing Diana":5,"Fire Suzaku Aggro Guo":4,"Serene Wind Astra Arisanna":4,"Fire Empower Crux Merlin":4
     }}
   };
   const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
@@ -491,16 +498,15 @@ function loadFullMeta() {
   const status = document.getElementById('fullMetaStatus');
   const ctx = document.getElementById('chartFull').getContext('2d');
   const data = {
-    "Water Aetherwing Diana": 122, "Fire Advent Umbra Ciel": 57, "Water Genbu Mill Guo": 52,
-    "Fire Suzaku Aggro Guo": 48, "Wind Seiryuu Guo Jia": 46, "Wind Wind Humans Crux": 44,
+    "Water Aetherwing Diana": 122, "Wind Crux Lorraine": 71, "Fire Oblation Ciel": 57,
+    "Water Genbu Mill Guo": 52, "Fire Suzaku Aggro Guo": 48, "Wind Seiryuu Guo Jia": 46,
     "Wind Crucible Racoongale Arisanna": 42, "Wind Seiryuu Allies Guo": 39,
-    "Water Fractals Diao Chan": 30, "Fire Slimes Silvie": 28, "Wind Crux Lorraine": 27,
-    "Water Unique Allies Ciel": 27, "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23,
+    "Water Fractals Diao Chan": 30, "Fire Slimes Silvie": 28, "Water Unique Allies Ciel": 27,
+    "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23,
     "Fire Empower Crux Merlin": 22, "Fortuitous Water Exia Jin": 22,
     "Serene Fire Luxem Zander": 19, "Fortuitous Wind Arcane Rai": 19,
     "Serene Wind Astra Arisanna": 18, "Fire Suited Tonoris": 16,
-    "Serene Water Exia Jin": 14, "Wind Wake Up": 13, "Water Tera Kongming": 11,
-    "Wind Hybrid Tristan": 10, "Wind Allies Lorraine": 10
+    "Serene Water Exia Jin": 14
   };
   const total = Object.values(data).reduce((a, b) => a + b, 0);
   status.textContent = 'Archetype breakdown across 1,058 players (top 25 shown)';
