@@ -70,7 +70,7 @@ canvas { max-width: 100%; max-height: 300px; }
     </div>
     <div class="chart-card">
       <h3>Full Field Archetype Breakdown</h3>
-      <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">Every player &mdash; not just top 8 &mdash; across all events</div>
+      <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">Every player across all 14 events — total counts, not just top 8</div>
       <div id="fullMetaStatus" style="font-size:0.8rem;color:#888;margin-bottom:0.5rem;">Loading full event data...</div>
       <canvas id="chartFull"></canvas>
     </div>
@@ -359,72 +359,23 @@ function renderCharts() {
   loadFullMeta();
 }
 
-let fullMetaLoaded = false;
-async function loadFullMeta() {
-  if (fullMetaLoaded) return;
+function loadFullMeta() {
   const status = document.getElementById('fullMetaStatus');
   const ctx = document.getElementById('chartFull').getContext('2d');
-  const allArchetypes = {};
-  let total = 0;
-  let failed = false;
-  for (const e of events) {
-    const oid = getOmnidexId(e.name);
-    if (!oid) continue;
-    try {
-      const res = await fetch('https://silvie.gg/api/events/' + oid);
-      if (!res.ok) throw new Error('HTTP ' + res.status);
-      const data = await res.json();
-      if (data.mrc_event_data) {
-        data.mrc_event_data.forEach(p => {
-          if (p.archetype && p.archetype !== 'Rogue') {
-            const arch = p.archetype.split(' ').slice(0,3).join(' ');
-            allArchetypes[arch] = (allArchetypes[arch] || 0) + 1;
-            total++;
-          }
-        });
-      }
-    } catch (err) {
-      failed = true;
-      break;
-    }
-  }
-  if (!failed && total > 0) {
-    fullMetaLoaded = true;
-    status.textContent = 'Total players analyzed: ' + total;
-    const sorted = Object.entries(allArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 15);
-    drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
-  } else {
-    status.textContent = 'Using top-8 data only (open via local server for full field).';
-    events.forEach(e => {
-      e.top8.forEach(p => {
-        const arch = p.archetype.split(' ').slice(0,3).join(' ');
-        allArchetypes[arch] = (allArchetypes[arch] || 0) + 1;
-        total++;
-      });
-    });
-    const sorted = Object.entries(allArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 15);
-    drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
-  }
-}
-
-function getOmnidexId(name) {
-  const map = {
-    "Radiant Origins UAE Regional Champs": 55096,
-    "Outpost Ghent | RDO Regional": 52895,
-    "Games Haven PJ RDO Regionals": 55777,
-    "RDO Tainan Regional": 54696,
-    "RDO Regional (Honors Ground Baguio)": 53422,
-    "Magic Stronghold - Radiant Origins Regional": 50799,
-    "Haven Games RDO Regionals": 50602,
-    "CoreTCG x Grand Archive RDO Regional Championship": 52319,
-    "Home-run GA RDO Regional": 55307,
-    "OCE Day 2 Regionals RDO": 55450,
-    "RDO Regionals - Wilczek": 50592,
-    "Wild Magic Store - Radiant Origin Brunei Regionals": 53256,
-    "The Banish Zone Regionals": 52480,
-    "OCE Nationals 2026": 55400
+  const data = {
+    "Water Aetherwing Diana": 108, "Fire Advent Umbra Ciel": 51, "Water Genbu Mill Guo Jia": 49,
+    "Fire Suzaku Aggro Guo Jia": 46, "Water Fractals Diao Chan": 45, "Wind Crucible Racoongale Arisanna": 40,
+    "Wind Seiryuu Guo Jia": 40, "Wind Wind Humans Crux Lorraine": 39, "Wind Seiryuu Allies Guo Jia": 36,
+    "Fire Slimes Silvie": 26, "Water Unique Allies Ciel": 25, "Wind Crux Lorraine": 24,
+    "Fire Aetherwing Diana": 23, "Fire Empower Crux Merlin": 20, "Wind Allies Tristan": 20,
+    "Fortuitous Water Exia Jin": 19, "Fire Aggro Lorraine": 17, "Wind Hybrid Tristan": 16,
+    "Serene Fire Luxem Zander": 16, "Wind Wild Feline Guo Jia": 15, "Serene Wind Astra Arisanna": 14,
+    "Wind Astra Arisanna": 11, "Water Mill Guo Jia": 11, "Fortuitous Wind Arcane Rai": 10
   };
-  return map[name];
+  const total = Object.values(data).reduce((a, b) => a + b, 0);
+  status.textContent = 'Total players analyzed: ' + total + ' (across all 14 events)';
+  const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
+  drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
 }
 
 function drawBarChart(ctx, data, color, bg) {
