@@ -439,32 +439,51 @@ function renderRegionalMeta() {
       "Wind Crux Lorraine": 8, "Fortuitous Water Exia": 7, "Wind Wind Humans": 7, "Fire Slimes Silvie": 6
     }}
   };
-  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort((a, b) => {
+  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))];
+  const sortState = window._regionSort || { col: null, asc: true };
+  const sorted = [...names].sort((a, b) => {
+    if (sortState.col) {
+      const va = regions[sortState.col].data[a] || 0;
+      const vb = regions[sortState.col].data[b] || 0;
+      return sortState.asc ? vb - va : va - vb;
+    }
     const sum = (arch) => Object.values(regions).reduce((s, r) => s + (r.data[arch] || 0), 0);
     return sum(b) - sum(a);
   });
   let html = '<table class="regional-table"><tr><th>Archetype</th>';
-  Object.keys(regions).forEach(r => { html += `<th>${r} (${regions[r].players})</th>`; });
+  Object.keys(regions).forEach(r => {
+    const arrow = sortState.col === r ? (sortState.asc ? ' ▲' : ' ▼') : '';
+    html += `<th onclick="sortRegion('${r}')" style="cursor:pointer">${r} (${regions[r].players})${arrow}</th>`;
+  });
   html += '</tr>';
-  names.forEach(arch => {
+  sorted.forEach(arch => {
     const na = regions.NA.data[arch] || 0;
     const eu = regions.EU.data[arch] || 0;
     const sea = regions.SEA.data[arch] || 0;
     const oce = regions.Oceania.data[arch] || 0;
     if (na + eu + sea + oce < 5) return;
-    const maxNa = Math.max(...names.map(a => regions.NA.data[a] || 0));
-    const maxEu = Math.max(...names.map(a => regions.EU.data[a] || 0));
-    const maxSea = Math.max(...names.map(a => regions.SEA.data[a] || 0));
-    const maxOce = Math.max(...names.map(a => regions.Oceania.data[a] || 0));
-    const hl = (val, max) => val === max && val > 0 ? ' style="color:#fff;font-weight:700"' : '';
+    const maxNa = Math.max(...sorted.map(a => regions.NA.data[a] || 0));
+    const maxEu = Math.max(...sorted.map(a => regions.EU.data[a] || 0));
+    const maxSea = Math.max(...sorted.map(a => regions.SEA.data[a] || 0));
+    const maxOce = Math.max(...sorted.map(a => regions.Oceania.data[a] || 0));
+    const col = sortState.col;
+    const hl = (val, max, region) => val === max && val > 0 && (!col || col === region) ? ' style="color:#fff;font-weight:700"' : '';
     html += `<tr><td style="font-weight:500">${arch}</td>
-      <td class="region-na"><span class="arch-count"${hl(na, maxNa)}>${na}</span></td>
-      <td class="region-eu"><span class="arch-count"${hl(eu, maxEu)}>${eu}</span></td>
-      <td class="region-sea"><span class="arch-count"${hl(sea, maxSea)}>${sea}</span></td>
-      <td class="region-oce"><span class="arch-count"${hl(oce, maxOce)}>${oce}</span></td></tr>`;
+      <td class="region-na"><span class="arch-count"${hl(na, maxNa, 'NA')}>${na}</span></td>
+      <td class="region-eu"><span class="arch-count"${hl(eu, maxEu, 'EU')}>${eu}</span></td>
+      <td class="region-sea"><span class="arch-count"${hl(sea, maxSea, 'SEA')}>${sea}</span></td>
+      <td class="region-oce"><span class="arch-count"${hl(oce, maxOce, 'Oceania')}>${oce}</span></td></tr>`;
   });
   html += '</table>';
   document.getElementById('regionalMeta').innerHTML = html;
+}
+
+function sortRegion(col) {
+  const s = window._regionSort || { col: null, asc: true };
+  if (s.col === col) s.asc = !s.asc;
+  else { s.col = col; s.asc = true; }
+  window._regionSort = s;
+  renderRegionalMeta();
 }
 
 function buildLegend(id, data, color) {
