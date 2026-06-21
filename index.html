@@ -361,9 +361,10 @@ function renderCharts() {
 }
 
 function buildLegend(id, data, color) {
+  const palette = ['#ff6b6b','#ffa07a','#ffd93d','#6fda8a','#4ecdc4','#45b7d1','#6c5ce7','#a29bfe','#fd79a8','#fdcb6e','#00cec9','#e17055','#00b894','#0984e3','#e84393'];
   const el = document.getElementById(id);
-  el.innerHTML = data.map(([name, count]) =>
-    `<span><span class="swatch" style="background:${color}"></span>${name} (${count})</span>`
+  el.innerHTML = data.map(([name, count], i) =>
+    `<span><span class="swatch" style="background:${color || palette[i % palette.length]}"></span>${name} (${count})</span>`
   ).join('');
 }
 
@@ -385,11 +386,12 @@ function loadFullMeta() {
   const total = Object.values(data).reduce((a, b) => a + b, 0);
   status.textContent = 'Archetype breakdown across ' + total + ' players (Rogue and unclassified excluded)';
   const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
-  drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
-  buildLegend('legendFull', sorted, '#ffa07a');
+  drawBarChart(ctx, sorted, null, '#1a1a30');
+  buildLegend('legendFull', sorted, null);
 }
 
 function drawBarChart(ctx, data, color, bg) {
+  const palette = ['#ff6b6b','#ffa07a','#ffd93d','#6fda8a','#4ecdc4','#45b7d1','#6c5ce7','#a29bfe','#fd79a8','#fdcb6e','#00cec9','#e17055','#00b894','#0984e3','#e84393'];
   const w = ctx.canvas.width = ctx.canvas.parentElement.clientWidth;
   const h = ctx.canvas.height = 250;
   const pad = { top: 30, right: 10, bottom: 30, left: 10 };
@@ -407,9 +409,10 @@ function drawBarChart(ctx, data, color, bg) {
     const barH = (d[1] / maxVal) * chartH;
     const y = pad.top + chartH - barH;
 
+    const c = color || palette[i % palette.length];
     const grad = ctx.createLinearGradient(x, y, x, pad.top + chartH);
-    grad.addColorStop(0, color);
-    grad.addColorStop(1, color + '44');
+    grad.addColorStop(0, c);
+    grad.addColorStop(1, c + '44');
     ctx.fillStyle = grad;
     ctx.beginPath();
     ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
