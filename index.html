@@ -45,6 +45,9 @@ tr:hover td { background: #222240; }
 .chart-card { background: #1a1a30; border: 1px solid #2a2a50; border-radius: 12px; padding: 1.25rem; }
 .chart-card h3 { color: #c4a0ff; margin-bottom: 1rem; font-size: 1rem; }
 canvas { max-width: 100%; max-height: 360px; }
+.chart-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.75rem; font-size: 0.8rem; color: #aaa; max-height: 200px; overflow-y: auto; }
+.chart-legend span { white-space: nowrap; display: inline-flex; align-items: center; gap: 0.3rem; }
+.chart-legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } .charts { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -62,17 +65,20 @@ canvas { max-width: 100%; max-height: 360px; }
     <div class="chart-card">
       <h3>Top Archetypes (Winners)</h3>
       <canvas id="chartWinners"></canvas>
+      <div class="chart-legend" id="legendWinners"></div>
     </div>
     <div class="chart-card">
       <h3>Overall Archetype Distribution (Top 8)</h3>
       <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">How many times each deck appeared in the top 8 across all events</div>
       <canvas id="chartOverall"></canvas>
+      <div class="chart-legend" id="legendOverall"></div>
     </div>
     <div class="chart-card">
       <h3>Full Field Archetype Breakdown</h3>
       <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">Every player across all 14 events — total counts, not just top 8</div>
       <div id="fullMetaStatus" style="font-size:0.8rem;color:#888;margin-bottom:0.5rem;">Loading full event data...</div>
       <canvas id="chartFull"></canvas>
+      <div class="chart-legend" id="legendFull"></div>
     </div>
   </div>
 
@@ -349,7 +355,16 @@ function renderCharts() {
 
   drawBarChart(ctx1, sortedW, '#c4a0ff', '#1a1a30');
   drawBarChart(ctx2, sortedA, '#6fda8a', '#1a1a30');
+  buildLegend('legendWinners', sortedW, '#c4a0ff');
+  buildLegend('legendOverall', sortedA, '#6fda8a');
   loadFullMeta();
+}
+
+function buildLegend(id, data, color) {
+  const el = document.getElementById(id);
+  el.innerHTML = data.map(([name, count]) =>
+    `<span><span class="swatch" style="background:${color}"></span>${name} (${count})</span>`
+  ).join('');
 }
 
 function loadFullMeta() {
@@ -371,12 +386,13 @@ function loadFullMeta() {
   status.textContent = 'Archetype breakdown across ' + total + ' players (Rogue and unclassified excluded)';
   const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 15);
   drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
+  buildLegend('legendFull', sorted, '#ffa07a');
 }
 
 function drawBarChart(ctx, data, color, bg) {
   const w = ctx.canvas.width = ctx.canvas.parentElement.clientWidth;
-  const h = ctx.canvas.height = 340;
-  const pad = { top: 30, right: 10, bottom: 150, left: 10 };
+  const h = ctx.canvas.height = 250;
+  const pad = { top: 30, right: 10, bottom: 30, left: 10 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
   const maxVal = Math.max(...data.map(d => d[1]), 1);
@@ -404,10 +420,6 @@ function drawBarChart(ctx, data, color, bg) {
     ctx.textAlign = 'center';
     ctx.fillText(d[1], x + barW/2, y - 4);
 
-    ctx.fillStyle = '#aaa';
-    ctx.font = '9px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(d[0], x + barW/2, pad.top + chartH + 14);
   });
 }
 
