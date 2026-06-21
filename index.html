@@ -607,7 +607,7 @@ function render() {
               <td class="rank rank-${p.rank}">${p.rank}</td>
               <td>${p.name}</td>
               <td>${p.record}</td>
-              <td class="archetype">${p.archetype}</td>
+              <td class="archetype">${archName(p.archetype)}</td>
             </tr>
           `).join('')}
         </table>
