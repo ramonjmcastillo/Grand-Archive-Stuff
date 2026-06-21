@@ -390,10 +390,8 @@ function renderConversion() {
     "Water Fractals Diao": 30, "Fire Slimes Silvie": 28, "Wind Crux Lorraine": 27,
     "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23, "Fire Empower Crux": 23,
     "Fortuitous Water Exia": 22, "Wind Wake Up": 20, "Fortuitous Wind Arcane": 19,
-    "Serene Fire Luxem": 19, "Serene Wind Astra": 18, "Fire Aggro Lorraine": 17,
-    "Fire Suited Tonoris": 16, "Wind Hybrid Tristan": 16, "Wind Wild Feline": 15,
-    "Wind Racoongale Alice": 14, "Water Tera Kongming": 13, "Water Mill Nico": 13,
-    "Wind Aliies Tonoris": 12, "Wind Wake Up Diana": 10, "Slimes Silvie": 9
+    "Serene Fire Luxem": 19, "Serene Wind Astra": 18, "Fire Unique Aggro": 17,
+    "Fire Suited Tonoris": 16
   };
   const top8Counts = {};
   events.forEach(e => {
@@ -419,18 +417,18 @@ function renderConversion() {
 function renderRegionalMeta() {
   const regions = {
     "NA": { players: 226, color: "region-na", data: {
-      "Water Aetherwing Diana": 20, "Fire Suzaku Aggro Guo": 15, "Water Genbu Mill": 11,
+      "Water Aetherwing Diana": 20, "Fire Suzaku Aggro": 15, "Water Genbu Mill": 11,
       "Wind Wind Humans": 11, "Fire Advent Umbra": 10, "Wind Crucible Racoongale": 8,
       "Water Unique Allies": 8, "Wind Seiryuu Allies": 7, "Fire Slimes Silvie": 6, "Serene Fire Luxem": 6
     }},
     "EU": { players: 113, color: "region-eu", data: {
       "Water Aetherwing Diana": 9, "Wind Crucible Racoongale": 8, "Fire Advent Umbra": 7,
-      "Water Unique Allies": 7, "Fire Suzaku Aggro Guo": 6, "Fire Slimes Silvie": 6,
+      "Water Unique Allies": 7, "Fire Suzaku Aggro": 6, "Fire Slimes Silvie": 6,
       "Wind Seiryuu Allies": 5, "Serene Wind Astra": 4, "Water Genbu Mill": 4, "Wind Seiryuu Guo": 4
     }},
     "SEA": { players: 498, color: "region-sea", data: {
       "Water Aetherwing Diana": 58, "Fire Advent Umbra": 28, "Water Genbu Mill": 26,
-      "Wind Wind Humans": 25, "Fire Suzaku Aggro Guo": 23, "Wind Seiryuu Guo": 22,
+      "Wind Wind Humans": 25, "Fire Suzaku Aggro": 23, "Wind Seiryuu Guo": 22,
       "Wind Crucible Racoongale": 20, "Water Fractals Diao": 18, "Wind Seiryuu Allies": 16, "Fire Empower Crux": 15
     }},
     "Oceania": { players: 221, color: "region-oce", data: {
@@ -504,13 +502,12 @@ function loadFullMeta() {
     "Water Fractals Diao": 30, "Fire Slimes Silvie": 28, "Wind Crux Lorraine": 27,
     "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23, "Fire Empower Crux": 23,
     "Fortuitous Water Exia": 22, "Wind Wake Up": 20, "Fortuitous Wind Arcane": 19,
-    "Serene Fire Luxem": 19, "Serene Wind Astra": 18, "Fire Aggro Lorraine": 17,
-    "Fire Suited Tonoris": 16, "Wind Hybrid Tristan": 16, "Wind Wild Feline": 15,
-    "Wind Racoongale Alice": 14, "Water Tera Kongming": 13, "Water Mill Nico": 13,
-    "Wind Aliies Tonoris": 12, "Wind Wake Up Diana": 10
+    "Serene Fire Luxem": 19, "Serene Wind Astra": 18, "Fire Unique Aggro": 17,
+    "Fire Suited Tonoris": 16, "Serene Water Exia": 14, "Water Tera Kongming": 11,
+    "Wind Allies Lorraine": 10
   };
   const total = Object.values(data).reduce((a, b) => a + b, 0);
-  status.textContent = 'Archetype breakdown across ' + total + ' players (Rogue and unclassified excluded)';
+  status.textContent = 'Archetype breakdown across 1,058 players (top 25 shown)';
   const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
   drawBarChart(ctx, sorted, null, '#1a1a30');
   buildLegend('legendFull', sorted, null);
