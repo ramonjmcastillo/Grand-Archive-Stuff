@@ -416,30 +416,25 @@ function renderConversion() {
 
 function renderRegionalMeta() {
   const regions = {
-    "NA": { players: 226, color: "region-na", data: {
-      "Water Aetherwing Diana": 20, "Fire Suzaku Aggro": 15, "Water Genbu Mill": 11,
-      "Wind Wind Humans": 11, "Fire Advent Umbra": 10, "Wind Crucible Racoongale": 8,
-      "Water Unique Allies": 8, "Wind Seiryuu Allies": 7, "Fire Slimes Silvie": 6, "Serene Fire Luxem": 6
+    "NA": { players: 226, data: {
+      "Fire Advent Umbra":10,"Fire Aetherwing Diana":5,"Fire Arcane Rai":2,"Fire Crux Lorraine":2,"Fire Empower Crux":4,"Fire Fractals Diao":3,"Fire Slimes Silvie":6,"Fire Suited Lorraine":0,"Fire Suited Tonoris":6,"Fire Suited Tristan":1,"Fire Suzaku Aggro":15,"Fire Umbra Ciel":1,"Fire Unique Aggro":3,"Fortuitous Water Exia":4,"Fortuitous Wind Arcane":6,"Fragmented Water Exia":3,"Serene Fire Exia":1,"Serene Fire Luxem":6,"Serene Fire Umbra":2,"Serene Water Exia":2,"Serene Water Mill":2,"Serene Wind Astra":6,"Slimes Silvie":1,"Water Aetherwing Diana":20,"Water Fractals Diao":6,"Water Genbu Mill":11,"Water Tera Kongming":3,"Water Unique Allies":8,"Wind Allies Lorraine":5,"Wind Allies Tonoris":2,"Wind Allies Tristan":4,"Wind Crucible Racoongale":8,"Wind Crux Lorraine":4,"Wind Hybrid Tristan":3,"Wind Racoongale Tonoris":1,"Wind Robo Allies":1,"Wind Seiryuu Allies":7,"Wind Seiryuu Guo":5,"Wind Unique Allies":1,"Wind Wake Up":1,"Wind Wind Humans":11
     }},
-    "EU": { players: 113, color: "region-eu", data: {
-      "Water Aetherwing Diana": 9, "Wind Crucible Racoongale": 8, "Fire Advent Umbra": 7,
-      "Water Unique Allies": 7, "Fire Suzaku Aggro": 6, "Fire Slimes Silvie": 6,
-      "Wind Seiryuu Allies": 5, "Serene Wind Astra": 4, "Water Genbu Mill": 4, "Wind Seiryuu Guo": 4
+    "EU": { players: 113, data: {
+      "Fire Advent Umbra":7,"Fire Aetherwing Diana":4,"Fire Arcane Rai":0,"Fire Crux Lorraine":1,"Fire Empower Crux":0,"Fire Fractals Diao":2,"Fire Slimes Silvie":6,"Fire Suited Lorraine":1,"Fire Suited Tonoris":3,"Fire Suited Tristan":0,"Fire Suzaku Aggro":6,"Fire Umbra Ciel":2,"Fire Unique Aggro":2,"Fortuitous Water Exia":2,"Fortuitous Wind Arcane":1,"Fragmented Water Exia":1,"Serene Fire Exia":1,"Serene Fire Luxem":2,"Serene Fire Umbra":1,"Serene Water Exia":1,"Serene Water Mill":0,"Serene Wind Astra":4,"Slimes Silvie":3,"Water Aetherwing Diana":9,"Water Fractals Diao":1,"Water Genbu Mill":4,"Water Tera Kongming":1,"Water Unique Allies":7,"Wind Allies Lorraine":0,"Wind Allies Tonoris":0,"Wind Allies Tristan":2,"Wind Crucible Racoongale":8,"Wind Crux Lorraine":2,"Wind Hybrid Tristan":1,"Wind Racoongale Tonoris":0,"Wind Robo Allies":0,"Wind Seiryuu Allies":5,"Wind Seiryuu Guo":4,"Wind Unique Allies":1,"Wind Wake Up":1,"Wind Wind Humans":2
     }},
-    "SEA": { players: 498, color: "region-sea", data: {
-      "Water Aetherwing Diana": 58, "Fire Advent Umbra": 28, "Water Genbu Mill": 26,
-      "Wind Wind Humans": 25, "Fire Suzaku Aggro": 23, "Wind Seiryuu Guo": 22,
-      "Wind Crucible Racoongale": 20, "Water Fractals Diao": 18, "Wind Seiryuu Allies": 16, "Fire Empower Crux": 15
+    "SEA": { players: 498, data: {
+      "Fire Advent Umbra":28,"Fire Aetherwing Diana":11,"Fire Arcane Rai":3,"Fire Crux Lorraine":3,"Fire Empower Crux":15,"Fire Fractals Diao":1,"Fire Slimes Silvie":10,"Fire Suited Lorraine":5,"Fire Suited Tonoris":7,"Fire Suited Tristan":1,"Fire Suzaku Aggro":23,"Fire Umbra Ciel":4,"Fire Unique Aggro":8,"Fortuitous Water Exia":9,"Fortuitous Wind Arcane":9,"Fragmented Water Exia":0,"Serene Fire Exia":3,"Serene Fire Luxem":8,"Serene Fire Umbra":2,"Serene Water Exia":5,"Serene Water Mill":3,"Serene Wind Astra":4,"Slimes Silvie":2,"Water Aetherwing Diana":58,"Water Fractals Diao":18,"Water Genbu Mill":26,"Water Tera Kongming":5,"Water Unique Allies":9,"Wind Allies Lorraine":3,"Wind Allies Tonoris":2,"Wind Allies Tristan":15,"Wind Crucible Racoongale":20,"Wind Crux Lorraine":13,"Wind Hybrid Tristan":6,"Wind Racoongale Tonoris":4,"Wind Robo Allies":3,"Wind Seiryuu Allies":16,"Wind Seiryuu Guo":22,"Wind Unique Allies":3,"Wind Wake Up":14,"Wind Wind Humans":25
     }},
-    "Oceania": { players: 221, color: "region-oce", data: {
-      "Water Aetherwing Diana": 35, "Wind Seiryuu Guo": 15, "Fire Advent Umbra": 12,
-      "Water Unique Allies": 12, "Wind Seiryuu Allies": 11, "Water Genbu Mill": 11,
-      "Wind Crux Lorraine": 8, "Fortuitous Water Exia": 7, "Wind Wind Humans": 7, "Fire Slimes Silvie": 6
+    "Oceania": { players: 221, data: {
+      "Fire Advent Umbra":12,"Fire Aetherwing Diana":5,"Fire Arcane Rai":0,"Fire Crux Lorraine":0,"Fire Empower Crux":4,"Fire Fractals Diao":0,"Fire Slimes Silvie":6,"Fire Suited Lorraine":0,"Fire Suited Tonoris":0,"Fire Suited Tristan":3,"Fire Suzaku Aggro":4,"Fire Umbra Ciel":2,"Fire Unique Aggro":4,"Fortuitous Water Exia":7,"Fortuitous Wind Arcane":3,"Fragmented Water Exia":1,"Serene Fire Exia":3,"Serene Fire Luxem":3,"Serene Fire Umbra":2,"Serene Water Exia":6,"Serene Water Mill":0,"Serene Wind Astra":4,"Slimes Silvie":0,"Water Aetherwing Diana":35,"Water Fractals Diao":5,"Water Genbu Mill":11,"Water Tera Kongming":2,"Water Unique Allies":12,"Wind Allies Lorraine":2,"Wind Allies Tonoris":3,"Wind Allies Tristan":2,"Wind Crucible Racoongale":6,"Wind Crux Lorraine":8,"Wind Hybrid Tristan":0,"Wind Racoongale Tonoris":0,"Wind Robo Allies":2,"Wind Seiryuu Allies":11,"Wind Seiryuu Guo":15,"Wind Unique Allies":0,"Wind Wake Up":4,"Wind Wind Humans":7
     }}
   };
-  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))];
+  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
   const sortState = window._regionSort || { col: null, asc: true };
-  const sorted = [...names].sort((a, b) => {
+  const sorted = [...names].filter(a => {
+    const sum = Object.values(regions).reduce((s, r) => s + (r.data[a] || 0), 0);
+    return sum >= 5;
+  }).sort((a, b) => {
     if (sortState.col) {
       const va = regions[sortState.col].data[a] || 0;
       const vb = regions[sortState.col].data[b] || 0;
@@ -460,7 +455,6 @@ function renderRegionalMeta() {
     const eu = regions.EU.data[arch] || 0;
     const sea = regions.SEA.data[arch] || 0;
     const oce = regions.Oceania.data[arch] || 0;
-    if (na + eu + sea + oce < 5) return;
     const maxNa = Math.max(...sorted.map(a => regions.NA.data[a] || 0));
     const maxEu = Math.max(...sorted.map(a => regions.EU.data[a] || 0));
     const maxSea = Math.max(...sorted.map(a => regions.SEA.data[a] || 0));
