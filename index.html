@@ -384,7 +384,7 @@ function loadFullMeta() {
   };
   const total = Object.values(data).reduce((a, b) => a + b, 0);
   status.textContent = 'Archetype breakdown across ' + total + ' players (Rogue and unclassified excluded)';
-  const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 15);
+  const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
   drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
   buildLegend('legendFull', sorted, '#ffa07a');
 }
