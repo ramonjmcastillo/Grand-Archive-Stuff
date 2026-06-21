@@ -48,6 +48,15 @@ canvas { max-width: 100%; max-height: 360px; }
 .chart-legend { display: flex; flex-wrap: wrap; gap: 0.4rem 1rem; margin-top: 0.75rem; font-size: 0.8rem; color: #aaa; max-height: 200px; overflow-y: auto; }
 .chart-legend span { white-space: nowrap; display: inline-flex; align-items: center; gap: 0.3rem; }
 .chart-legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+.regional-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.regional-table th { text-align: left; padding: 0.4rem 0.6rem; background: #252545; color: #a0a0c0; font-weight: 600; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+.regional-table td { padding: 0.3rem 0.6rem; border-bottom: 1px solid #252545; vertical-align: top; }
+.regional-table .arch-count { color: #888; font-size: 0.75rem; }
+.regional-table tr:hover td { background: #222240; }
+.region-na { border-left: 3px solid #ff6b6b; }
+.region-eu { border-left: 3px solid #ffd93d; }
+.region-sea { border-left: 3px solid #4ecdc4; }
+.region-oce { border-left: 3px solid #6c5ce7; }
 @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } .charts { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -85,6 +94,11 @@ canvas { max-width: 100%; max-height: 360px; }
       <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">% of pilots who made top 8 — higher = overperforms its play rate</div>
       <canvas id="chartConversion"></canvas>
       <div class="chart-legend" id="legendConversion"></div>
+    </div>
+    <div class="chart-card">
+      <h3>Regional Meta Comparison</h3>
+      <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">Top archetypes per region — total players across all events in that region</div>
+      <div id="regionalMeta"></div>
     </div>
   </div>
 
@@ -365,6 +379,7 @@ function renderCharts() {
   buildLegend('legendOverall', sortedA, null);
   loadFullMeta();
   renderConversion();
+  renderRegionalMeta();
 }
 
 function renderConversion() {
@@ -399,6 +414,45 @@ function renderConversion() {
   el.innerHTML = rates.map(([arch, total, top8, rate], i) =>
     `<span><span class="swatch" style="background:${palette[i % palette.length]}"></span>${arch} — ${top8}/${total} (${(rate).toFixed(2)}%)</span>`
   ).join('');
+}
+
+function renderRegionalMeta() {
+  const regions = {
+    "NA": { players: 226, color: "region-na", data: {
+      "Water Aetherwing Diana": 20, "Fire Suzaku Aggro Guo": 15, "Water Genbu Mill": 11,
+      "Wind Wind Humans": 11, "Fire Advent Umbra": 10, "Wind Crucible Racoongale": 8,
+      "Water Unique Allies": 8, "Wind Seiryuu Allies": 7, "Fire Slimes Silvie": 6, "Serene Fire Luxem": 6
+    }},
+    "EU": { players: 113, color: "region-eu", data: {
+      "Water Aetherwing Diana": 9, "Wind Crucible Racoongale": 8, "Fire Advent Umbra": 7,
+      "Water Unique Allies": 7, "Fire Suzaku Aggro Guo": 6, "Fire Slimes Silvie": 6,
+      "Wind Seiryuu Allies": 5, "Serene Wind Astra": 4, "Water Genbu Mill": 4, "Wind Seiryuu Guo": 4
+    }},
+    "SEA": { players: 498, color: "region-sea", data: {
+      "Water Aetherwing Diana": 58, "Fire Advent Umbra": 28, "Water Genbu Mill": 26,
+      "Wind Wind Humans": 25, "Fire Suzaku Aggro Guo": 23, "Wind Seiryuu Guo": 22,
+      "Wind Crucible Racoongale": 20, "Water Fractals Diao": 18, "Wind Seiryuu Allies": 16, "Fire Empower Crux": 15
+    }},
+    "Oceania": { players: 221, color: "region-oce", data: {
+      "Water Aetherwing Diana": 35, "Wind Seiryuu Guo": 15, "Fire Advent Umbra": 12,
+      "Water Unique Allies": 12, "Wind Seiryuu Allies": 11, "Water Genbu Mill": 11,
+      "Wind Crux Lorraine": 8, "Fortuitous Water Exia": 7, "Wind Wind Humans": 7, "Fire Slimes Silvie": 6
+    }}
+  };
+  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
+  let html = '<table class="regional-table"><tr><th>Archetype</th>';
+  Object.keys(regions).forEach(r => { html += `<th>${r} (${regions[r].players})</th>`; });
+  html += '</tr>';
+  names.forEach(arch => {
+    const na = regions.NA.data[arch] || 0;
+    const eu = regions.EU.data[arch] || 0;
+    const sea = regions.SEA.data[arch] || 0;
+    const oce = regions.Oceania.data[arch] || 0;
+    if (na + eu + sea + oce < 5) return;
+    html += `<tr><td style="font-weight:500">${arch}</td><td class="region-na"><span class="arch-count">${na}</span></td><td class="region-eu"><span class="arch-count">${eu}</span></td><td class="region-sea"><span class="arch-count">${sea}</span></td><td class="region-oce"><span class="arch-count">${oce}</span></td></tr>`;
+  });
+  html += '</table>';
+  document.getElementById('regionalMeta').innerHTML = html;
 }
 
 function buildLegend(id, data, color) {
