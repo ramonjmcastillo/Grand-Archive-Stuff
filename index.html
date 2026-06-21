@@ -44,7 +44,7 @@ tr:hover td { background: #222240; }
 .charts { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
 .chart-card { background: #1a1a30; border: 1px solid #2a2a50; border-radius: 12px; padding: 1.25rem; }
 .chart-card h3 { color: #c4a0ff; margin-bottom: 1rem; font-size: 1rem; }
-canvas { max-width: 100%; max-height: 300px; }
+canvas { max-width: 100%; max-height: 360px; }
 @media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } .charts { grid-template-columns: 1fr; } }
 </style>
 </head>
@@ -373,8 +373,8 @@ function loadFullMeta() {
 
 function drawBarChart(ctx, data, color, bg) {
   const w = ctx.canvas.width = ctx.canvas.parentElement.clientWidth;
-  const h = ctx.canvas.height = 280;
-  const pad = { top: 30, right: 10, bottom: 160, left: 10 };
+  const h = ctx.canvas.height = 340;
+  const pad = { top: 30, right: 10, bottom: 150, left: 10 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
   const maxVal = Math.max(...data.map(d => d[1]), 1);
@@ -402,14 +402,10 @@ function drawBarChart(ctx, data, color, bg) {
     ctx.textAlign = 'center';
     ctx.fillText(d[1], x + barW/2, y - 4);
 
-    ctx.save();
-    ctx.translate(x + barW/2, pad.top + chartH + 10);
-    ctx.rotate(-0.4);
     ctx.fillStyle = '#aaa';
-    ctx.font = '10px sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(d[0], 0, 0);
-    ctx.restore();
+    ctx.font = '9px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d[0], x + barW/2, pad.top + chartH + 14);
   });
 }
 
