@@ -450,8 +450,9 @@ function renderRegionalMeta() {
   });
   let html = '<table class="regional-table"><tr><th>Archetype</th>';
   Object.keys(regions).forEach(r => {
+    const shown = Object.values(regions[r].data).reduce((s, v) => s + v, 0);
     const arrow = sortState.col === r ? (sortState.asc ? ' ▲' : ' ▼') : '';
-    html += `<th onclick="sortRegion('${r}')" style="cursor:pointer">${r} (${regions[r].players})${arrow}</th>`;
+    html += `<th onclick="sortRegion('${r}')" style="cursor:pointer">${r} (${shown}/${regions[r].players})${arrow}</th>`;
   });
   html += '</tr>';
   sorted.forEach(arch => {
