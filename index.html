@@ -452,7 +452,16 @@ function renderRegionalMeta() {
     const sea = regions.SEA.data[arch] || 0;
     const oce = regions.Oceania.data[arch] || 0;
     if (na + eu + sea + oce < 5) return;
-    html += `<tr><td style="font-weight:500">${arch}</td><td class="region-na"><span class="arch-count">${na}</span></td><td class="region-eu"><span class="arch-count">${eu}</span></td><td class="region-sea"><span class="arch-count">${sea}</span></td><td class="region-oce"><span class="arch-count">${oce}</span></td></tr>`;
+    const maxNa = Math.max(...names.map(a => regions.NA.data[a] || 0));
+    const maxEu = Math.max(...names.map(a => regions.EU.data[a] || 0));
+    const maxSea = Math.max(...names.map(a => regions.SEA.data[a] || 0));
+    const maxOce = Math.max(...names.map(a => regions.Oceania.data[a] || 0));
+    const hl = (val, max) => val === max && val > 0 ? ' style="color:#fff;font-weight:700"' : '';
+    html += `<tr><td style="font-weight:500">${arch}</td>
+      <td class="region-na"><span class="arch-count"${hl(na, maxNa)}>${na}</span></td>
+      <td class="region-eu"><span class="arch-count"${hl(eu, maxEu)}>${eu}</span></td>
+      <td class="region-sea"><span class="arch-count"${hl(sea, maxSea)}>${sea}</span></td>
+      <td class="region-oce"><span class="arch-count"${hl(oce, maxOce)}>${oce}</span></td></tr>`;
   });
   html += '</table>';
   document.getElementById('regionalMeta').innerHTML = html;
