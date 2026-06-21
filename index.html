@@ -444,16 +444,16 @@ function renderConversion() {
 function renderRegionalMeta() {
   const regions = {
     "NA": { players: 226, data: {
-      "Water Aetherwing Diana":20,"Fire Suzaku Guo Jia":15,"Wind Crux Lorraine":15,"Wind Seiryuu Guo Jia":13,"Water Genbu Mill Guo":11,"Fire Oblation Ciel":10,"Wind Crucible Racoongale Arisanna":8,"Water Fractals Diao Chan":6,"Serene Wind Astra Arisanna":6,"Fire Suited Tonoris":6,"Fire Slimes Silvie":6,"Fortuitous Wind Arcane Rai":6,"Serene Fire Luxem Zander":6,"Wind Allies Lorraine":6,"Water Unique Allies Ciel":5,"Fire Aetherwing Diana":5,"Fortuitous Water Exia Jin":4,"Wind Shadowstrike Tristan":4,"Wind Wake Up":1
+      "Water Aetherwing Diana":20,"Fire Suzaku Guo Jia":15,"Wind Crux Lorraine":15,"Wind Seiryuu Guo Jia":13,"Water Genbu Mill Guo Jia":11,"Fire Oblation Ciel":10,"Wind Crucible Racoongale Arisanna":8,"Water Fractals Diao Chan":6,"Serene Wind Astra Arisanna":6,"Fire Suited Tonoris":6,"Fire Slimes Silvie":6,"Fortuitous Wind Arcane Rai":6,"Serene Fire Luxem Zander":6,"Wind Allies Lorraine":6,"Water Unique Allies Ciel":5,"Fire Aetherwing Diana":5,"Fortuitous Water Exia Jin":4,"Wind Shadowstrike Tristan":4,"Wind Wake Up":1,"Serene Water Exia Jin":2
     }},
     "EU": { players: 113, data: {
-      "Water Aetherwing Diana":9,"Wind Seiryuu Guo Jia":9,"Wind Crucible Racoongale Arisanna":8,"Fire Oblation Ciel":7,"Fire Suzaku Guo Jia":6,"Fire Slimes Silvie":6,"Water Unique Allies Ciel":5,"Wind Crux Lorraine":4,"Water Genbu Mill Guo":4,"Fire Aetherwing Diana":4,"Serene Wind Astra Arisanna":4,"Wind Wake Up":1
+      "Water Aetherwing Diana":9,"Wind Seiryuu Guo Jia":9,"Wind Crucible Racoongale Arisanna":8,"Fire Oblation Ciel":7,"Fire Suzaku Guo Jia":6,"Fire Slimes Silvie":6,"Water Unique Allies Ciel":5,"Wind Crux Lorraine":4,"Water Genbu Mill Guo Jia":4,"Fire Aetherwing Diana":4,"Serene Wind Astra Arisanna":4,"Wind Wake Up":1,"Serene Water Exia Jin":1
     }},
     "SEA": { players: 498, data: {
-      "Water Aetherwing Diana":58,"Wind Seiryuu Guo Jia":39,"Wind Crux Lorraine":37,"Fire Oblation Ciel":28,"Water Genbu Mill Guo":26,"Fire Suzaku Guo Jia":23,"Wind Crucible Racoongale Arisanna":20,"Water Fractals Diao Chan":18,"Wind Shadowstrike Tristan":15,"Fire Crux Merlin":15,"Wind Wake Up":14,"Fire Aetherwing Diana":11,"Fire Slimes Silvie":10,"Fortuitous Water Exia Jin":9,"Fortuitous Wind Arcane Rai":9,"Serene Fire Luxem Zander":8,"Water Unique Allies Ciel":7,"Wind Allies Lorraine":7,"Fire Suited Tonoris":7
+      "Water Aetherwing Diana":58,"Wind Seiryuu Guo Jia":39,"Wind Crux Lorraine":38,"Fire Oblation Ciel":28,"Water Genbu Mill Guo Jia":26,"Fire Suzaku Guo Jia":23,"Wind Crucible Racoongale Arisanna":20,"Water Fractals Diao Chan":18,"Wind Shadowstrike Tristan":15,"Fire Crux Merlin":15,"Wind Wake Up":14,"Fire Aetherwing Diana":11,"Fire Slimes Silvie":10,"Fortuitous Water Exia Jin":9,"Fortuitous Wind Arcane Rai":9,"Serene Fire Luxem Zander":8,"Water Unique Allies Ciel":7,"Wind Allies Lorraine":7,"Fire Suited Tonoris":7,"Wind Hybrid Tristan":6,"Serene Water Exia Jin":5,"Water Tera Kongming":5
     }},
     "Oceania": { players: 221, data: {
-      "Water Aetherwing Diana":35,"Wind Seiryuu Guo Jia":26,"Wind Crux Lorraine":18,"Fire Oblation Ciel":12,"Water Genbu Mill Guo":11,"Water Unique Allies Ciel":10,"Fortuitous Water Exia Jin":7,"Wind Allies Lorraine":4,"Wind Wake Up":4,"Wind Crucible Racoongale Arisanna":6,"Serene Water Exia Jin":6,"Fire Slimes Silvie":6,"Water Fractals Diao Chan":5,"Fire Aetherwing Diana":5,"Fire Suzaku Guo Jia":4,"Serene Wind Astra Arisanna":4,"Fire Empower Crux Merlin":4
+      "Water Aetherwing Diana":35,"Wind Seiryuu Guo Jia":26,"Wind Crux Lorraine":18,"Fire Oblation Ciel":12,"Water Genbu Mill Guo Jia":11,"Water Unique Allies Ciel":10,"Fortuitous Water Exia Jin":7,"Wind Allies Lorraine":4,"Wind Wake Up":4,"Serene Water Exia Jin":6,"Wind Crucible Racoongale Arisanna":6,"Fire Slimes Silvie":6,"Water Fractals Diao Chan":5,"Fire Aetherwing Diana":5,"Fire Suzaku Guo Jia":4,"Serene Wind Astra Arisanna":4,"Fire Crux Merlin":4
     }}
   };
   const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
