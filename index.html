@@ -343,6 +343,8 @@ function archName(full) {
   };
   return map[t] || t;
 }
+
+function getRegions() {
   const r = new Set(); events.forEach(e => r.add(e.region)); return [...r].sort();
 }
 
