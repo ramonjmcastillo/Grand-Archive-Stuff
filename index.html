@@ -413,10 +413,15 @@ function renderConversion() {
       top8Counts[s] = (top8Counts[s] || 0) + 1;
     });
   });
-  const rates = Object.entries(totalPilots).map(([arch, total]) => {
+  const withTop8 = Object.entries(totalPilots).map(([arch, total]) => {
     const top8 = top8Counts[arch] || 0;
     return [arch, total, top8, total > 0 ? (top8 / total * 100) : 0];
   }).filter(([_, t, t8]) => t8 >= 1).sort((a, b) => b[3] - a[3]);
+  const zeroConv = Object.entries(totalPilots).map(([arch, total]) => {
+    const top8 = top8Counts[arch] || 0;
+    return [arch, total, top8, 0];
+  }).filter(([_, t, t8]) => t8 === 0).sort((a, b) => b[1] - a[1]).slice(0, 3);
+  const rates = withTop8.concat(zeroConv);
 
   const ctx = document.getElementById('chartConversion').getContext('2d');
   drawBarChart(ctx, rates.map(r => [r[0] + ' (' + (r[3]).toFixed(2) + '%)', Math.round(r[3] * 100) / 100]), null, '#1a1a30');
