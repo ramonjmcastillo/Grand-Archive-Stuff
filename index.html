@@ -374,7 +374,7 @@ function loadFullMeta() {
 function drawBarChart(ctx, data, color, bg) {
   const w = ctx.canvas.width = ctx.canvas.parentElement.clientWidth;
   const h = ctx.canvas.height = 280;
-  const pad = { top: 30, right: 10, bottom: 120, left: 10 };
+  const pad = { top: 30, right: 10, bottom: 160, left: 10 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
   const maxVal = Math.max(...data.map(d => d[1]), 1);
@@ -402,10 +402,14 @@ function drawBarChart(ctx, data, color, bg) {
     ctx.textAlign = 'center';
     ctx.fillText(d[1], x + barW/2, y - 4);
 
+    ctx.save();
+    ctx.translate(x + barW/2, pad.top + chartH + 10);
+    ctx.rotate(-0.4);
     ctx.fillStyle = '#aaa';
     ctx.font = '10px sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText(d[0], x + barW/2, pad.top + chartH + 14);
+    ctx.textAlign = 'left';
+    ctx.fillText(d[0], 0, 0);
+    ctx.restore();
   });
 }
 
