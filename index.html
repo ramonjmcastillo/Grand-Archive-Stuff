@@ -403,7 +403,8 @@ function renderConversion() {
     "Fire Slimes Silvie": 28, "Water Unique Allies Ciel": 27, "Fire Aetherwing Diana": 25,
     "Wind Allies Tristan": 23, "Fire Empower Crux Merlin": 22, "Fortuitous Water Exia Jin": 22,
     "Serene Fire Luxem Zander": 19, "Fortuitous Wind Arcane Rai": 19,
-    "Serene Wind Astra Arisanna": 18, "Fire Suited Tonoris": 16
+    "Serene Wind Astra Arisanna": 18, "Fire Suited Tonoris": 16,
+    "Serene Water Exia Jin": 14
   };
   const top8Counts = {};
   events.forEach(e => {
@@ -415,7 +416,7 @@ function renderConversion() {
   const rates = Object.entries(totalPilots).map(([arch, total]) => {
     const top8 = top8Counts[arch] || 0;
     return [arch, total, top8, total > 0 ? (top8 / total * 100) : 0];
-  }).filter(([_, t]) => t >= 15).sort((a, b) => b[3] - a[3]);
+  }).filter(([_, t, t8]) => t8 >= 1).sort((a, b) => b[3] - a[3]);
 
   const ctx = document.getElementById('chartConversion').getContext('2d');
   drawBarChart(ctx, rates.map(r => [r[0] + ' (' + (r[3]).toFixed(2) + '%)', Math.round(r[3] * 100) / 100]), null, '#1a1a30');
