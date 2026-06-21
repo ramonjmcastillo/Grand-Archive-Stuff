@@ -316,18 +316,11 @@ function typeColor(level) {
 
 function renderStats() {
   const totalPlayers = events.reduce((s, e) => s + e.players, 0);
-  const winnerArchetypes = {};
-  events.forEach(e => {
-    const w = e.top8.find(p => p.rank === 1);
-    if (w) winnerArchetypes[w.archetype] = (winnerArchetypes[w.archetype] || 0) + 1;
-  });
-  const topArch = Object.entries(winnerArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 3);
 
   document.getElementById('stats').innerHTML = `
     <div class="stat-card"><div class="value">${events.length}</div><div class="label">Total Events</div><div class="sub">${events.filter(e=>e.level==='Regional').length} Regionals, ${events.filter(e=>e.level==='Nationals').length} Nationals</div></div>
     <div class="stat-card"><div class="value">${totalPlayers}</div><div class="label">Total Players</div><div class="sub">across all events</div></div>
     <div class="stat-card"><div class="value">${new Set(events.map(e=>e.region)).size}</div><div class="label">Regions</div><div class="sub">${[...new Set(events.map(e=>e.region))].join(', ')}</div></div>
-    <div class="stat-card"><div class="value">${topArch.map(([a,c])=>a+' ('+c+')').join(', ')}</div><div class="label">Most Winning Archetypes</div><div class="sub">appearances as champion</div></div>
   `;
 }
 
