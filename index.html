@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grand Archive TCG - Tournament Analytics</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+.header { background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 100%); padding: 2rem; text-align: center; border-bottom: 2px solid #6c3fc4; }
+.header h1 { font-size: 2rem; color: #c4a0ff; }
+.header p { color: #888; margin-top: 0.5rem; }
+.container { max-width: 1400px; margin: 0 auto; padding: 1.5rem; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+.stat-card { background: #1a1a30; border: 1px solid #2a2a50; border-radius: 12px; padding: 1.25rem; text-align: center; }
+.stat-card .value { font-size: 2rem; font-weight: 700; color: #c4a0ff; }
+.stat-card .label { font-size: 0.85rem; color: #888; margin-top: 0.25rem; }
+.stat-card .sub { font-size: 0.75rem; color: #666; margin-top: 0.15rem; }
+.filters { display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.5rem; align-items: center; }
+.filters select, .filters input { background: #1a1a30; border: 1px solid #2a2a50; color: #e0e0e0; padding: 0.5rem 0.75rem; border-radius: 8px; font-size: 0.9rem; }
+.filters select { cursor: pointer; }
+.filters input { flex: 1; min-width: 200px; }
+.events-grid { display: grid; gap: 1rem; }
+.event-card { background: #1a1a30; border: 1px solid #2a2a50; border-radius: 12px; overflow: hidden; }
+.event-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 1.25rem; cursor: pointer; transition: background 0.2s; }
+.event-header:hover { background: #222240; }
+.event-header .name { font-weight: 600; color: #c4a0ff; }
+.event-header .meta { display: flex; gap: 1rem; font-size: 0.85rem; color: #888; align-items: center; }
+.event-header .level-badge { padding: 0.2rem 0.6rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; }
+.level-Regional { background: #2a4a3a; color: #6fda8a; }
+.level-Nationals { background: #4a2a3a; color: #da6f8a; }
+.expand-icon { font-size: 0.8rem; color: #666; }
+.event-body { display: none; padding: 1rem 1.25rem; border-top: 1px solid #2a2a50; }
+.event-body.open { display: block; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { text-align: left; padding: 0.5rem 0.75rem; background: #252545; color: #a0a0c0; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; }
+td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #252545; }
+tr:hover td { background: #222240; }
+.rank { color: #c4a0ff; font-weight: 700; width: 40px; }
+.rank-1 { color: #ffd700; }
+.rank-2 { color: #c0c0c0; }
+.rank-3 { color: #cd7f32; }
+.archetype { font-size: 0.85rem; }
+.charts { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 2rem; }
+.chart-card { background: #1a1a30; border: 1px solid #2a2a50; border-radius: 12px; padding: 1.25rem; }
+.chart-card h3 { color: #c4a0ff; margin-bottom: 1rem; font-size: 1rem; }
+canvas { max-width: 100%; max-height: 300px; }
+@media (max-width: 768px) { .stats { grid-template-columns: repeat(2, 1fr); } .charts { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Grand Archive TCG Tournament Analytics</h1>
+  <p>Radiant Origins Season &mdash; Regional Events &amp; OCE Nationals 2026</p>
+</div>
+
+<div class="container">
+  <div class="stats" id="stats"></div>
+
+  <div class="charts">
+    <div class="chart-card">
+      <h3>Top Archetypes (Winners)</h3>
+      <canvas id="chartWinners"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Overall Archetype Distribution (Top 8)</h3>
+      <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">How many times each deck appeared in the top 8 across all events</div>
+      <canvas id="chartOverall"></canvas>
+    </div>
+    <div class="chart-card">
+      <h3>Full Field Archetype Breakdown</h3>
+      <div style="font-size:0.75rem;color:#666;margin-bottom:0.5rem;">Every player &mdash; not just top 8 &mdash; across all events</div>
+      <div id="fullMetaStatus" style="font-size:0.8rem;color:#888;margin-bottom:0.5rem;">Loading full event data...</div>
+      <canvas id="chartFull"></canvas>
+    </div>
+  </div>
+
+  <div class="filters">
+    <select id="filterType" onchange="render()">
+      <option value="all">All Event Types</option>
+      <option value="Regional">Regional</option>
+      <option value="Nationals">Nationals</option>
+    </select>
+    <select id="filterRegion" onchange="render()">
+      <option value="all">All Regions</option>
+    </select>
+    <input type="text" id="filterSearch" placeholder="Search events..." oninput="render()">
+    <span id="eventCount" style="color:#888;font-size:0.85rem;"></span>
+  </div>
+
+  <div class="events-grid" id="events"></div>
+</div>
+
+<script>
+const events = [
+  {
+    name: "Radiant Origins UAE Regional Champs",
+    date: "2026-06-14", location: "United Arab Emirates", region: "EU",
+    level: "Regional", players: 38, store: "Back to Games Jumeirah",
+    top8: [
+      {rank:1, name:"Val #21223", record:"5-0-1", archetype:"Wind Unique Allies Vanitas"},
+      {rank:2, name:"MystoganZero #8498", record:"5-1-0", archetype:"Wind Crucible Racoongale Arisanna"},
+      {rank:3, name:"MAlshamsi #23277", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:4, name:"RAv #19131", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:5, name:"Chihuahua #8359", record:"4-1-1", archetype:"Fortuitous Water Exia Jin"},
+      {rank:6, name:"Mort #19525", record:"3-2-0", archetype:"Water Aetherwing Diana"},
+      {rank:7, name:"Alshamsi4 #3562", record:"4-2-0", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:8, name:"CiYan #19443", record:"3-1-2", archetype:"Water Aetherwing Diana"}
+    ]
+  },
+  {
+    name: "Outpost Ghent | RDO Regional",
+    date: "2026-06-14", location: "Ghent, Belgium", region: "EU",
+    level: "Regional", players: 35, store: "Outpost Ghent",
+    top8: [
+      {rank:1, name:"DinkyDane #18859", record:"4-0-2", archetype:"Fire Suzaku Aggro Guo Jia"},
+      {rank:2, name:"Yoroi #2824", record:"4-0-2", archetype:"Water Unique Allies Ciel"},
+      {rank:3, name:"Tobi #1267", record:"4-0-2", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:4, name:"PogoTama #868", record:"4-1-1", archetype:"Water Unique Allies Nico"},
+      {rank:5, name:"Sanmyaku #7954", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:6, name:"Kwekling #3011", record:"4-2-0", archetype:"Wind Seiryuu Guo Jia"},
+      {rank:7, name:"Minam #2504", record:"4-2-0", archetype:"Water Aetherwing Diana"},
+      {rank:8, name:"ktaersidon #19912", record:"3-2-0", archetype:"Wind Seiryuu Guo Jia"}
+    ]
+  },
+  {
+    name: "Games Haven PJ RDO Regionals",
+    date: "2026-06-13", location: "Petaling Jaya, Malaysia", region: "SEA",
+    level: "Regional", players: 185, store: "Games Haven",
+    top8: [
+      {rank:1, name:"chazzex #10656", record:"6-0-2", archetype:"Water Exia Jin"},
+      {rank:2, name:"Legilus #10493", record:"6-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:3, name:"Maelstrom #24483", record:"5-0-3", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:4, name:"SPARTACVS #21951", record:"5-0-3", archetype:"Water Fractals Diao Chan"},
+      {rank:5, name:"Severn #1690", record:"5-0-3", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:6, name:"Ken #4621", record:"5-0-3", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:7, name:"MP997 #17929", record:"6-2-0", archetype:"Fire Aetherwing Diana"},
+      {rank:8, name:"ChrisL #13051", record:"5-1-2", archetype:"Water Aetherwing Diana"}
+    ]
+  },
+  {
+    name: "RDO Tainan Regional",
+    date: "2026-06-13", location: "Taoyuan, Taiwan", region: "SEA",
+    level: "Regional", players: 93, store: "Fayble International",
+    top8: [
+      {rank:1, name:"Freedom0212 #6792", record:"6-0-1", archetype:"Wind Wake Up"},
+      {rank:2, name:"Mushroom #3547", record:"6-1-0", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:3, name:"JChiang #24960", record:"6-1-0", archetype:"Wind Seiryuu Racoongale Guo Jia"},
+      {rank:4, name:"william #3753", record:"5-0-2", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:5, name:"Julia0725 #13728", record:"5-1-1", archetype:"Empower Crux Merlin"},
+      {rank:6, name:"Royan #7610", record:"5-1-1", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:7, name:"Yhj0127 #2455", record:"5-1-1", archetype:"Wind Crux Lorraine"},
+      {rank:8, name:"JimmyHuang #13534", record:"5-1-1", archetype:"Wind Wake Up Diana"}
+    ]
+  },
+  {
+    name: "RDO Regional (Honors Ground Baguio)",
+    date: "2026-06-13", location: "Baguio, Philippines", region: "SEA",
+    level: "Regional", players: 77, store: "Honors Ground Hobbies and Toys",
+    top8: [
+      {rank:1, name:"TrueSightFugative #199", record:"6-1-0", archetype:"Water Aetherwing Diana"},
+      {rank:2, name:"TrueSightLeocroix #312", record:"5-1-1", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:3, name:"tko #242", record:"5-1-1", archetype:"Water Aetherwing Diana"},
+      {rank:4, name:"Elowyl #2960", record:"4-0-3", archetype:"Fire Advent Umbra Ciel"},
+      {rank:5, name:"ahuinan #10057", record:"5-2-0", archetype:"Serene Water Exia Jin"},
+      {rank:6, name:"Otoro #390", record:"4-0-3", archetype:"Wind Crucible Racoongale Arisanna"},
+      {rank:7, name:"JPD #18860", record:"5-2-0", archetype:"Fire Aetherwing Diana"},
+      {rank:8, name:"Rolex #7403", record:"5-2-0", archetype:"Wind Crux Lorraine"}
+    ]
+  },
+  {
+    name: "Magic Stronghold - Radiant Origins Regional",
+    date: "2026-06-13", location: "Vancouver, Canada", region: "NA",
+    level: "Regional", players: 61, store: "Magic Stronghold Games",
+    top8: [
+      {rank:1, name:"Auli #679", record:"5-0-1", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:2, name:"Fruitcake #12950", record:"5-1-0", archetype:"Fire Astra Arisanna"},
+      {rank:3, name:"song #21700", record:"4-0-2", archetype:"Wind Allies Tonoris"},
+      {rank:4, name:"Sano #4458", record:"4-1-1", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:5, name:"FlamingFlamingo #17901", record:"4-1-1", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:6, name:"EnderZone #4924", record:"4-1-1", archetype:"Water Unique Allies Ciel"},
+      {rank:7, name:"Renaylria #27319", record:"4-1-1", archetype:"Serene Water Exia Jin"},
+      {rank:8, name:"Centai #12609", record:"4-1-1", archetype:"Fire Suited Tonoris"}
+    ]
+  },
+  {
+    name: "Haven Games RDO Regionals",
+    date: "2026-06-13", location: "Casselberry, FL, USA", region: "NA",
+    level: "Regional", players: 42, store: "The Haven Games",
+    top8: [
+      {rank:1, name:"axis261 #737", record:"5-0-1", archetype:"Fire PonyTas Vanitas"},
+      {rank:2, name:"Skysama #1339", record:"4-0-2", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:3, name:"Wan #20174", record:"4-0-2", archetype:"Serene Fire Alice Distorted Queen"},
+      {rank:4, name:"1wisp #6451", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:5, name:"YoumuKonpaku #25397", record:"4-1-1", archetype:"Water Fractals Diao Chan"},
+      {rank:6, name:"Ryer #2657", record:"4-1-1", archetype:"Water Unique Allies Ciel"},
+      {rank:7, name:"Hanma #305", record:"4-1-1", archetype:"Fortuitous Water Exia Jin"},
+      {rank:8, name:"LeekBlade #574", record:"4-2-0", archetype:"Fire Aggro Rai"}
+    ]
+  },
+  {
+    name: "CoreTCG x Grand Archive RDO Regional Championship",
+    date: "2026-06-06", location: "Pasadena, CA, USA", region: "NA",
+    level: "Regional", players: 76, store: "CoreTCG",
+    top8: [
+      {rank:1, name:"BigNickleEye #158", record:"6-0-1", archetype:"Water Aetherwing Diana"},
+      {rank:2, name:"DestinyClownFish #13045", record:"5-1-1", archetype:"Fire Aetherwing Diana"},
+      {rank:3, name:"FretTheCapo #504", record:"5-1-1", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:4, name:"Alberio #1677", record:"5-1-1", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:5, name:"curlpixels #18869", record:"5-1-1", archetype:"Fire Aetherwing Diana"},
+      {rank:6, name:"SocalsFinest #16014", record:"5-2-0", archetype:"Fire Dispersion Lorraine"},
+      {rank:7, name:"Zalp #23614", record:"5-2-0", archetype:"Serene Fire Advent Umbra Ciel"},
+      {rank:8, name:"Srlqulongtard #2427", record:"5-2-0", archetype:"Serene Wind Astra Arisanna"}
+    ]
+  },
+  {
+    name: "Home-run GA RDO Regional",
+    date: "2026-06-06", location: "Mong Kok, Hong Kong", region: "SEA",
+    level: "Regional", players: 102, store: "Home-run",
+    top8: [
+      {rank:1, name:"Raypig #3181", record:"6-0-1", archetype:"Water Mill Nico"},
+      {rank:2, name:"Keith #3473", record:"6-1-0", archetype:"Fire Advent Umbra Ciel"},
+      {rank:3, name:"Wkin #16933", record:"6-1-0", archetype:"Water Aetherwing Diana"},
+      {rank:4, name:"YOUCAN8J #16755", record:"5-0-2", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:5, name:"LeungPuiKit #18574", record:"5-1-1", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:6, name:"Raylam #1246", record:"5-1-1", archetype:"Water Aetherwing Diana"},
+      {rank:7, name:"Yat #18591", record:"5-1-1", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:8, name:"CarlosWong #11892", record:"5-1-1", archetype:"Serene Fire Luxem Zander"}
+    ]
+  },
+  {
+    name: "OCE Day 2 Regionals RDO",
+    date: "2026-06-06", location: "Wellington, New Zealand", region: "Oceania",
+    level: "Regional", players: 95, store: "Geek Culture",
+    top8: [
+      {rank:1, name:"Professor #16501", record:"6-1-0", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:2, name:"KMO #16433", record:"6-1-0", archetype:"Fortuitous Water Exia Jin"},
+      {rank:3, name:"Jayare #10149", record:"5-1-1", archetype:"Water Fractals Diao Chan"},
+      {rank:4, name:"elgrundo #336", record:"5-1-1", archetype:"Water Aetherwing Diana"},
+      {rank:5, name:"Johnbed #580", record:"5-2-0", archetype:"Wind Wind Humans Crux Lorraine"},
+      {rank:6, name:"lucasis #2723", record:"4-0-3", archetype:"Water Aetherwing Diana"},
+      {rank:7, name:"KitKat #6666", record:"5-2-0", archetype:"Water Aetherwing Diana"},
+      {rank:8, name:"Clashking #14818", record:"5-2-0", archetype:"Wind Seiryuu Guo Jia"}
+    ]
+  },
+  {
+    name: "RDO Regionals - Wilczek",
+    date: "2026-06-06", location: "Poznan, Poland", region: "EU",
+    level: "Regional", players: 44, store: "Wilczek Sklep",
+    top8: [
+      {rank:1, name:"Lukasz45 #7425", record:"5-0-1", archetype:"Fire Suzaku Aggro Guo Jia"},
+      {rank:2, name:"V41N #7875", record:"4-0-2", archetype:"Wind Seiryuu Guo Jia"},
+      {rank:3, name:"Zidwa #7471", record:"4-1-1", archetype:"Water Aetherwing Diana"},
+      {rank:4, name:"Silver #1292", record:"4-1-1", archetype:"Fire Suited Tonoris"},
+      {rank:5, name:"Twix #21479", record:"4-1-1", archetype:"Wind Seiryuu Guo Jia"},
+      {rank:6, name:"Horinti #8453", record:"4-1-1", archetype:"Water Unique Allies Ciel"},
+      {rank:7, name:"Jigsee #1631", record:"4-1-1", archetype:"Wind Crucible Racoongale Arisanna"},
+      {rank:8, name:"YamatoEdge #18041", record:"4-1-1", archetype:"Fire Umbra Ciel"}
+    ]
+  },
+  {
+    name: "Wild Magic Store - Radiant Origin Brunei Regionals",
+    date: "2026-06-06", location: "Bandar Seri Begawan, Brunei", region: "SEA",
+    level: "Regional", players: 60, store: "Wild Magic Store",
+    top8: [
+      {rank:1, name:"Fayyadh #9973", record:"5-0-1", archetype:"Water Fractals Arisanna"},
+      {rank:2, name:"notzee #17963", record:"5-0-1", archetype:"Water Aetherwing Diana"},
+      {rank:3, name:"Azwarjung #3052", record:"4-1-1", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:4, name:"Mrbruh #21157", record:"4-1-1", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:5, name:"Sting88 #21445", record:"4-1-1", archetype:"Fragmented Fire Empower Crux Merlin"},
+      {rank:6, name:"Awi #16320", record:"4-1-1", archetype:"Serene Fire Luxem Zander"},
+      {rank:7, name:"ZunnyT #16816", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:8, name:"Lonelywish #755", record:"4-1-1", archetype:"Fortuitous Water Exia Jin"}
+    ]
+  },
+  {
+    name: "The Banish Zone Regionals",
+    date: "2026-06-06", location: "Wernersville, PA, USA", region: "NA",
+    level: "Regional", players: 58, store: "The Banish Zone",
+    top8: [
+      {rank:1, name:"stevo7653 #181", record:"5-0-1", archetype:"Fortuitous Water Exia Jin"},
+      {rank:2, name:"JCcalonge #426", record:"5-1-0", archetype:"Wind Allies Lorraine"},
+      {rank:3, name:"JacePatrick #2477", record:"4-1-1", archetype:"Fire Advent Umbra Ciel"},
+      {rank:4, name:"Moog #12440", record:"4-1-1", archetype:"Fragmented Water Exia Jin"},
+      {rank:5, name:"Kitterfox #22908", record:"4-1-1", archetype:"Water Aetherwing Diana"},
+      {rank:6, name:"Jschmitt481 #4804", record:"4-1-1", archetype:"Fragmented Water Exia Jin"},
+      {rank:7, name:"JackintheBox #15444", record:"4-2-0", archetype:"Fire Suited Tonoris"},
+      {rank:8, name:"leoblade #316", record:"3-0-3", archetype:"Water Fractals Diao Chan"}
+    ]
+  },
+  {
+    name: "OCE Nationals 2026",
+    date: "2026-06-05", location: "Wellington, New Zealand", region: "Oceania",
+    level: "Nationals", players: 129, store: "Geek Culture",
+    top8: [
+      {rank:1, name:"Limelight #227", record:"8-2-2", archetype:"Fire Advent Umbra Ciel"},
+      {rank:2, name:"Yamikin #388", record:"8-2-2", archetype:"Water Unique Allies Ciel"},
+      {rank:3, name:"Sano #4458", record:"7-0-5", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:4, name:"Pulse #684", record:"7-1-4", archetype:"Wind Seiryuu Allies Guo Jia"},
+      {rank:5, name:"Dennisyao #7086", record:"8-3-1", archetype:"Water Aetherwing Diana"},
+      {rank:6, name:"Xaleonidas #9600", record:"8-3-1", archetype:"Water Aetherwing Diana"},
+      {rank:7, name:"Curtilious #11922", record:"7-1-4", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:8, name:"klvr #18505", record:"8-3-1", archetype:"Wind Seiryuu Guo Jia"}
+    ]
+  }
+];
+
+function getRegions() {
+  const r = new Set(); events.forEach(e => r.add(e.region)); return [...r].sort();
+}
+
+function typeColor(level) {
+  return level === 'Nationals' ? '#da6f8a' : '#6fda8a';
+}
+
+function renderStats() {
+  const totalPlayers = events.reduce((s, e) => s + e.players, 0);
+  const winnerArchetypes = {};
+  events.forEach(e => {
+    const w = e.top8.find(p => p.rank === 1);
+    if (w) winnerArchetypes[w.archetype] = (winnerArchetypes[w.archetype] || 0) + 1;
+  });
+  const topArch = Object.entries(winnerArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 3);
+
+  document.getElementById('stats').innerHTML = `
+    <div class="stat-card"><div class="value">${events.length}</div><div class="label">Total Events</div><div class="sub">${events.filter(e=>e.level==='Regional').length} Regionals, ${events.filter(e=>e.level==='Nationals').length} Nationals</div></div>
+    <div class="stat-card"><div class="value">${totalPlayers}</div><div class="label">Total Players</div><div class="sub">across all events</div></div>
+    <div class="stat-card"><div class="value">${new Set(events.map(e=>e.region)).size}</div><div class="label">Regions</div><div class="sub">${[...new Set(events.map(e=>e.region))].join(', ')}</div></div>
+    <div class="stat-card"><div class="value">${topArch.map(([a,c])=>a+' ('+c+')').join(', ')}</div><div class="label">Most Winning Archetypes</div><div class="sub">appearances as champion</div></div>
+  `;
+}
+
+function renderCharts() {
+  const ctx1 = document.getElementById('chartWinners').getContext('2d');
+  const ctx2 = document.getElementById('chartOverall').getContext('2d');
+
+  const winnerArch = {};
+  events.forEach(e => {
+    const w = e.top8.find(p => p.rank === 1);
+    if (w) {
+      const simple = w.archetype.split(' ').slice(0,3).join(' ');
+      winnerArch[simple] = (winnerArch[simple] || 0) + 1;
+    }
+  });
+  const sortedW = Object.entries(winnerArch).sort((a, b) => b[1] - a[1]);
+
+  const allArch = {};
+  events.forEach(e => {
+    e.top8.forEach(p => {
+      const simple = p.archetype.split(' ').slice(0,3).join(' ');
+      allArch[simple] = (allArch[simple] || 0) + 1;
+    });
+  });
+  const sortedA = Object.entries(allArch).sort((a, b) => b[1] - a[1]).slice(0, 12);
+
+  drawBarChart(ctx1, sortedW, '#c4a0ff', '#1a1a30');
+  drawBarChart(ctx2, sortedA, '#6fda8a', '#1a1a30');
+  loadFullMeta();
+}
+
+let fullMetaLoaded = false;
+async function loadFullMeta() {
+  if (fullMetaLoaded) return;
+  const status = document.getElementById('fullMetaStatus');
+  const ctx = document.getElementById('chartFull').getContext('2d');
+  const allArchetypes = {};
+  let total = 0;
+  let failed = false;
+  for (const e of events) {
+    const oid = getOmnidexId(e.name);
+    if (!oid) continue;
+    try {
+      const res = await fetch('https://silvie.gg/api/events/' + oid);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const data = await res.json();
+      if (data.mrc_event_data) {
+        data.mrc_event_data.forEach(p => {
+          if (p.archetype && p.archetype !== 'Rogue') {
+            const arch = p.archetype.split(' ').slice(0,3).join(' ');
+            allArchetypes[arch] = (allArchetypes[arch] || 0) + 1;
+            total++;
+          }
+        });
+      }
+    } catch (err) {
+      failed = true;
+      break;
+    }
+  }
+  if (!failed && total > 0) {
+    fullMetaLoaded = true;
+    status.textContent = 'Total players analyzed: ' + total;
+    const sorted = Object.entries(allArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 15);
+    drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
+  } else {
+    status.textContent = 'Using top-8 data only (open via local server for full field).';
+    events.forEach(e => {
+      e.top8.forEach(p => {
+        const arch = p.archetype.split(' ').slice(0,3).join(' ');
+        allArchetypes[arch] = (allArchetypes[arch] || 0) + 1;
+        total++;
+      });
+    });
+    const sorted = Object.entries(allArchetypes).sort((a, b) => b[1] - a[1]).slice(0, 15);
+    drawBarChart(ctx, sorted, '#ffa07a', '#1a1a30');
+  }
+}
+
+function getOmnidexId(name) {
+  const map = {
+    "Radiant Origins UAE Regional Champs": 55096,
+    "Outpost Ghent | RDO Regional": 52895,
+    "Games Haven PJ RDO Regionals": 55777,
+    "RDO Tainan Regional": 54696,
+    "RDO Regional (Honors Ground Baguio)": 53422,
+    "Magic Stronghold - Radiant Origins Regional": 50799,
+    "Haven Games RDO Regionals": 50602,
+    "CoreTCG x Grand Archive RDO Regional Championship": 52319,
+    "Home-run GA RDO Regional": 55307,
+    "OCE Day 2 Regionals RDO": 55450,
+    "RDO Regionals - Wilczek": 50592,
+    "Wild Magic Store - Radiant Origin Brunei Regionals": 53256,
+    "The Banish Zone Regionals": 52480,
+    "OCE Nationals 2026": 55400
+  };
+  return map[name];
+}
+
+function drawBarChart(ctx, data, color, bg) {
+  const w = ctx.canvas.width = ctx.canvas.parentElement.clientWidth;
+  const h = ctx.canvas.height = 280;
+  const pad = { top: 30, right: 10, bottom: 120, left: 10 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+  const maxVal = Math.max(...data.map(d => d[1]), 1);
+  const barW = Math.min(60, (chartW / data.length) * 0.7);
+
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, w, h);
+
+  data.forEach((d, i) => {
+    const x = pad.left + (i / data.length) * chartW + (chartW / data.length - barW) / 2;
+    const barH = (d[1] / maxVal) * chartH;
+    const y = pad.top + chartH - barH;
+
+    const grad = ctx.createLinearGradient(x, y, x, pad.top + chartH);
+    grad.addColorStop(0, color);
+    grad.addColorStop(1, color + '44');
+    ctx.fillStyle = grad;
+    ctx.beginPath();
+    ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]);
+    ctx.fill();
+
+    ctx.fillStyle = '#fff';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d[1], x + barW/2, y - 4);
+
+    ctx.fillStyle = '#aaa';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(d[0], x + barW/2, pad.top + chartH + 14);
+  });
+}
+
+function render() {
+  const type = document.getElementById('filterType').value;
+  const region = document.getElementById('filterRegion').value;
+  const search = document.getElementById('filterSearch').value.toLowerCase();
+
+  let filtered = events.filter(e => {
+    if (type !== 'all' && e.level !== type) return false;
+    if (region !== 'all' && e.region !== region) return false;
+    if (search && !e.name.toLowerCase().includes(search) && !e.location.toLowerCase().includes(search)) return false;
+    return true;
+  });
+
+  document.getElementById('eventCount').textContent = `Showing ${filtered.length} of ${events.length} events`;
+
+  const container = document.getElementById('events');
+  container.innerHTML = filtered.map((e, idx) => `
+    <div class="event-card">
+      <div class="event-header" onclick="toggle('e${idx}')">
+        <div>
+          <div class="name">${e.name}</div>
+          <div style="font-size:0.8rem;color:#666;margin-top:0.2rem">${e.location} &middot; ${e.date} &middot; ${e.players} players</div>
+        </div>
+        <div class="meta">
+          <span class="level-badge level-${e.level}">${e.level}</span>
+          <span>${e.region}</span>
+          <span class="expand-icon">&#9660;</span>
+        </div>
+      </div>
+      <div class="event-body" id="body_e${idx}">
+        <table>
+          <tr><th>#</th><th>Player</th><th>Record</th><th>Archetype</th></tr>
+          ${e.top8.map(p => `
+            <tr>
+              <td class="rank rank-${p.rank}">${p.rank}</td>
+              <td>${p.name}</td>
+              <td>${p.record}</td>
+              <td class="archetype">${p.archetype}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggle(id) {
+  const el = document.getElementById('body_' + id);
+  if (el) el.classList.toggle('open');
+}
+
+function initFilters() {
+  const sel = document.getElementById('filterRegion');
+  getRegions().forEach(r => {
+    const opt = document.createElement('option');
+    opt.value = r;
+    opt.textContent = r;
+    sel.appendChild(opt);
+  });
+}
+
+// Canvas roundRect polyfill
+if (!CanvasRenderingContext2D.prototype.roundRect) {
+  CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+    if (r > w/2) r = w/2;
+    if (r > h/2) r = h/2;
+    this.moveTo(x + r, y);
+    this.lineTo(x + w - r, y);
+    this.quadraticCurveTo(x + w, y, x + w, y + r);
+    this.lineTo(x + w, y + h - r);
+    this.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+    this.lineTo(x + r, y + h);
+    this.quadraticCurveTo(x, y + h, x, y + h - r);
+    this.lineTo(x, y + r);
+    this.quadraticCurveTo(x, y, x + r, y);
+    this.closePath();
+    return this;
+  };
+}
+
+initFilters();
+renderStats();
+renderCharts();
+render();
+</script>
+</body>
+</html>
