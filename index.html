@@ -356,14 +356,16 @@ function loadFullMeta() {
   const status = document.getElementById('fullMetaStatus');
   const ctx = document.getElementById('chartFull').getContext('2d');
   const data = {
-    "Water Aetherwing Diana": 108, "Fire Advent Umbra Ciel": 51, "Water Genbu Mill Guo Jia": 49,
-    "Fire Suzaku Aggro Guo Jia": 46, "Water Fractals Diao Chan": 45, "Wind Crucible Racoongale Arisanna": 40,
-    "Wind Seiryuu Guo Jia": 40, "Wind Wind Humans Crux Lorraine": 39, "Wind Seiryuu Allies Guo Jia": 36,
-    "Fire Slimes Silvie": 26, "Water Unique Allies Ciel": 25, "Wind Crux Lorraine": 24,
-    "Fire Aetherwing Diana": 23, "Fire Empower Crux Merlin": 20, "Wind Allies Tristan": 20,
-    "Fortuitous Water Exia Jin": 19, "Fire Aggro Lorraine": 17, "Wind Hybrid Tristan": 16,
-    "Serene Fire Luxem Zander": 16, "Wind Wild Feline Guo Jia": 15, "Serene Wind Astra Arisanna": 14,
-    "Wind Astra Arisanna": 11, "Water Mill Guo Jia": 11, "Fortuitous Wind Arcane Rai": 10
+    "Water Aetherwing Diana": 122, "Fire Advent Umbra": 57, "Water Genbu Mill": 52,
+    "Fire Suzaku Aggro": 48, "Wind Seiryuu Guo": 46, "Wind Wind Humans": 45,
+    "Wind Crucible Racoongale": 42, "Wind Seiryuu Allies": 39, "Water Unique Allies": 36,
+    "Water Fractals Diao": 30, "Fire Slimes Silvie": 28, "Wind Crux Lorraine": 27,
+    "Fire Aetherwing Diana": 25, "Wind Allies Tristan": 23, "Fire Empower Crux": 23,
+    "Fortuitous Water Exia": 22, "Wind Wake Up": 20, "Fortuitous Wind Arcane": 19,
+    "Serene Fire Luxem": 19, "Serene Wind Astra": 18, "Fire Aggro Lorraine": 17,
+    "Fire Suited Tonoris": 16, "Wind Hybrid Tristan": 16, "Wind Wild Feline": 15,
+    "Wind Racoongale Alice": 14, "Water Tera Kongming": 13, "Water Mill Nico": 13,
+    "Wind Aliies Tonoris": 12, "Wind Wake Up Diana": 10
   };
   const total = Object.values(data).reduce((a, b) => a + b, 0);
   status.textContent = 'Archetype breakdown across ' + total + ' players (Rogue and unclassified excluded)';
