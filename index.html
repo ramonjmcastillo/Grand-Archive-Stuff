@@ -439,7 +439,10 @@ function renderRegionalMeta() {
       "Wind Crux Lorraine": 8, "Fortuitous Water Exia": 7, "Wind Wind Humans": 7, "Fire Slimes Silvie": 6
     }}
   };
-  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
+  const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort((a, b) => {
+    const sum = (arch) => Object.values(regions).reduce((s, r) => s + (r.data[arch] || 0), 0);
+    return sum(b) - sum(a);
+  });
   let html = '<table class="regional-table"><tr><th>Archetype</th>';
   Object.keys(regions).forEach(r => { html += `<th>${r} (${regions[r].players})</th>`; });
   html += '</tr>';
