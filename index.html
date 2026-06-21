@@ -406,7 +406,7 @@ function renderConversion() {
   }).filter(([_, t]) => t >= 15).sort((a, b) => b[3] - a[3]);
 
   const ctx = document.getElementById('chartConversion').getContext('2d');
-  drawBarChart(ctx, rates.map(r => [r[0] + ' (' + (r[3]).toFixed(2) + '%)', r[3]]), null, '#1a1a30');
+  drawBarChart(ctx, rates.map(r => [r[0] + ' (' + (r[3]).toFixed(2) + '%)', Math.round(r[3] * 100) / 100]), null, '#1a1a30');
   const el = document.getElementById('legendConversion');
   const palette = ['#ff6b6b','#ffa07a','#ffd93d','#6fda8a','#4ecdc4','#45b7d1','#6c5ce7','#a29bfe','#fd79a8','#fdcb6e','#00cec9','#e17055','#00b894','#0984e3','#e84393'];
   el.innerHTML = rates.map(([arch, total, top8, rate], i) =>
