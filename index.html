@@ -353,10 +353,10 @@ function renderCharts() {
   });
   const sortedA = Object.entries(allArch).sort((a, b) => b[1] - a[1]).slice(0, 12);
 
-  drawBarChart(ctx1, sortedW, '#c4a0ff', '#1a1a30');
-  drawBarChart(ctx2, sortedA, '#6fda8a', '#1a1a30');
-  buildLegend('legendWinners', sortedW, '#c4a0ff');
-  buildLegend('legendOverall', sortedA, '#6fda8a');
+  drawBarChart(ctx1, sortedW, null, '#1a1a30');
+  drawBarChart(ctx2, sortedA, null, '#1a1a30');
+  buildLegend('legendWinners', sortedW, null);
+  buildLegend('legendOverall', sortedA, null);
   loadFullMeta();
 }
 
