@@ -539,7 +539,7 @@ function drawBarChart(ctx, data, color, bg) {
     ctx.fillStyle = '#fff';
     ctx.font = '11px sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(typeof d[1] === 'number' ? d[1].toFixed(2) + '%' : d[1], x + barW/2, y - 4);
+    ctx.fillText(d[1], x + barW/2, y - 4);
 
   });
 }
