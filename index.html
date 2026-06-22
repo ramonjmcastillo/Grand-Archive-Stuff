@@ -121,6 +121,36 @@ canvas { max-width: 100%; max-height: 360px; }
 <script>
 const events = [
   {
+    name: "Radiant Origins Regionals at Archive Collectables",
+    date: "2026-06-20", location: "Camberwell VIC, Australia", region: "Oceania",
+    level: "Regional", players: 49, store: "Archive Collectables",
+    top8: [
+      {rank:1, name:"Tien #874", record:"6-0-0", archetype:"Water Aetherwing Diana"},
+      {rank:2, name:"Jayare #10149", record:"4-0-2", archetype:"Wind Crux Lorraine"},
+      {rank:3, name:"Curtilious #11922", record:"4-1-1", archetype:"Fortuitous Water Exia Jin"},
+      {rank:4, name:"Geo #248", record:"4-1-1", archetype:"Fortuitous Water Exia Jin"},
+      {rank:5, name:"WhatDoYouMinh #1033", record:"4-1-1", archetype:"Water Genbu Mill Guo Jia"},
+      {rank:6, name:"Azdares #25364", record:"4-1-1", archetype:"Water Fractals Diao Chan"},
+      {rank:7, name:"Allen #611", record:"4-1-1", archetype:"Water Unique Allies Ciel"},
+      {rank:8, name:"Nathan #520", record:"4-1-1", archetype:"Serene Wind Astra Arisanna"}
+    ]
+  },
+  {
+    name: "Tokyo Regional RDO Season",
+    date: "2026-06-20", location: "Shinjuku, Tokyo, Japan", region: "SEA",
+    level: "Regional", players: 65, store: "TCG Cafe & Bar EVO",
+    top8: [
+      {rank:1, name:"KingArmo #9484", record:"5-0-2", archetype:"Wind Crux Lorraine"},
+      {rank:2, name:"barbarian #13361", record:"5-1-1", archetype:"Wind Shadowstrike Tristan"},
+      {rank:3, name:"etoneko #20818", record:"5-1-1", archetype:"Water Umbra Mill Alice"},
+      {rank:4, name:"yokomi #4571", record:"4-0-3", archetype:"Wind Razorgale Arisanna"},
+      {rank:5, name:"Ruruca #16263", record:"5-2-0", archetype:"Fortuitous Wind Arcane Rai"},
+      {rank:6, name:"Deme #12364", record:"4-0-3", archetype:"Wind Razorgale Arisanna"},
+      {rank:7, name:"CommanderO9 #23384", record:"5-2-0", archetype:"Fire Burn Diao Chan"},
+      {rank:8, name:"daimaru #15431", record:"5-2-0", archetype:"Wind Shadowstrike Tristan"}
+    ]
+  },
+  {
     name: "Radiant Origins UAE Regional Champs",
     date: "2026-06-14", location: "United Arab Emirates", region: "EU",
     level: "Regional", players: 38, store: "Back to Games Jumeirah",
@@ -350,7 +380,8 @@ function archName(full) {
     "Water Genbu Mill Guo": "Water Genbu Mill Guo Jia",
     "Fire Suzaku Aggro Guo": "Fire Suzaku Guo Jia",
     "Wind Allies Tristan": "Wind Shadowstrike Tristan",
-    "Wind Hybrid Tristan": "Wind Shadowstrike Tristan"
+    "Wind Hybrid Tristan": "Wind Shadowstrike Tristan",
+    "Wind Razorgale Arisanna": "Wind Crucible Racoongale Arisanna"
   };
   return map[t] || t;
 }
@@ -407,14 +438,16 @@ function renderCharts() {
 
 function renderConversion() {
   const totalPilots = {
-    "Water Aetherwing Diana": 122, "Wind Seiryuu Guo Jia": 87, "Wind Crux Lorraine": 75,
-    "Fire Oblation Ciel": 57, "Water Genbu Mill Guo Jia": 52, "Fire Suzaku Guo Jia": 48,
-    "Wind Crucible Racoongale Arisanna": 42, "Water Fractals Diao Chan": 30,
-    "Fire Slimes Silvie": 28, "Water Unique Allies Ciel": 27, "Fire Aetherwing Diana": 25,
-    "Wind Shadowstrike Tristan": 33, "Fortuitous Water Exia Jin": 22, "Fire Crux Merlin": 22,
-    "Wind Wake Up": 20, "Fortuitous Wind Arcane Rai": 19, "Serene Fire Luxem Zander": 19,
-    "Serene Wind Astra Arisanna": 18, "Wind Allies Lorraine": 17, "Fire Suited Tonoris": 16,
-    "Serene Water Exia Jin": 14, "Water Tera Kongming": 11, "Wind Hybrid Tristan": 10
+    "Water Aetherwing Diana": 132, "Wind Seiryuu Guo Jia": 95, "Wind Crux Lorraine": 83,
+    "Fire Oblation Ciel": 65, "Water Genbu Mill Guo Jia": 55, "Fire Suzaku Guo Jia": 52,
+    "Wind Crucible Racoongale Arisanna": 47, "Wind Shadowstrike Tristan": 38,
+    "Water Fractals Diao Chan": 35, "Fire Slimes Silvie": 31,
+    "Water Unique Allies Ciel": 29, "Fire Aetherwing Diana": 29, "Fortuitous Water Exia Jin": 29,
+    "Fire Crux Merlin": 22, "Wind Wake Up": 22, "Serene Wind Astra Arisanna": 21,
+    "Fortuitous Wind Arcane Rai": 20, "Serene Fire Luxem Zander": 19,
+    "Fire Suited Tonoris": 18, "Wind Allies Lorraine": 17, "Serene Water Exia Jin": 14,
+    "Water Tera Kongming": 12, "Wind Hybrid Tristan": 10,
+    "Water Umbra Mill Alice": 1, "Fire Burn Diao Chan": 1
   };
   const top8Counts = {};
   events.forEach(e => {
@@ -450,11 +483,11 @@ function renderRegionalMeta() {
     "EU": { players: 113, data: {
       "Water Aetherwing Diana":9,"Wind Seiryuu Guo Jia":9,"Wind Crucible Racoongale Arisanna":8,"Fire Oblation Ciel":7,"Fire Suzaku Guo Jia":6,"Fire Slimes Silvie":6,"Water Unique Allies Ciel":5,"Wind Crux Lorraine":4,"Water Genbu Mill Guo Jia":4,"Fire Aetherwing Diana":4,"Serene Wind Astra Arisanna":4,"Wind Shadowstrike Tristan":3,"Wind Wake Up":1,"Serene Water Exia Jin":1
     }},
-    "SEA": { players: 498, data: {
-      "Water Aetherwing Diana":58,"Wind Seiryuu Guo Jia":39,"Wind Crux Lorraine":38,"Fire Oblation Ciel":28,"Water Genbu Mill Guo Jia":26,"Fire Suzaku Guo Jia":23,"Wind Crucible Racoongale Arisanna":20,"Water Fractals Diao Chan":18,"Wind Shadowstrike Tristan":21,"Fire Crux Merlin":15,"Wind Wake Up":14,"Fire Aetherwing Diana":11,"Fire Slimes Silvie":10,"Fortuitous Water Exia Jin":9,"Fortuitous Wind Arcane Rai":9,"Serene Fire Luxem Zander":8,"Water Unique Allies Ciel":7,"Wind Allies Lorraine":7,"Fire Suited Tonoris":7,"Serene Water Exia Jin":5,"Water Tera Kongming":5
+    "SEA": { players: 563, data: {
+      "Water Aetherwing Diana":67,"Wind Seiryuu Guo Jia":46,"Wind Crux Lorraine":42,"Fire Oblation Ciel":31,"Water Genbu Mill Guo Jia":27,"Fire Suzaku Guo Jia":26,"Wind Crucible Racoongale Arisanna":24,"Water Fractals Diao Chan":21,"Wind Shadowstrike Tristan":25,"Fire Crux Merlin":15,"Wind Wake Up":14,"Fire Aetherwing Diana":12,"Fire Slimes Silvie":11,"Fortuitous Water Exia Jin":13,"Fortuitous Wind Arcane Rai":10,"Serene Fire Luxem Zander":8,"Water Unique Allies Ciel":7,"Wind Allies Lorraine":7,"Fire Suited Tonoris":8,"Serene Water Exia Jin":5,"Water Tera Kongming":6
     }},
-    "Oceania": { players: 221, data: {
-      "Water Aetherwing Diana":35,"Wind Seiryuu Guo Jia":26,"Wind Crux Lorraine":18,"Fire Oblation Ciel":12,"Water Genbu Mill Guo Jia":11,"Water Unique Allies Ciel":10,"Fortuitous Water Exia Jin":7,"Wind Allies Lorraine":4,"Wind Wake Up":4,"Serene Water Exia Jin":6,"Wind Crucible Racoongale Arisanna":6,"Fire Slimes Silvie":6,"Water Fractals Diao Chan":5,"Fire Aetherwing Diana":5,"Fire Suzaku Guo Jia":4,"Serene Wind Astra Arisanna":4,"Fire Crux Merlin":4
+    "Oceania": { players: 270, data: {
+      "Water Aetherwing Diana":36,"Wind Seiryuu Guo Jia":27,"Wind Crux Lorraine":22,"Fire Oblation Ciel":17,"Water Genbu Mill Guo Jia":13,"Water Unique Allies Ciel":12,"Fortuitous Water Exia Jin":10,"Wind Allies Lorraine":4,"Wind Wake Up":6,"Serene Water Exia Jin":6,"Wind Crucible Racoongale Arisanna":7,"Fire Slimes Silvie":8,"Water Fractals Diao Chan":7,"Fire Aetherwing Diana":8,"Fire Suzaku Guo Jia":5,"Serene Wind Astra Arisanna":6,"Fire Crux Merlin":4,"Wind Shadowstrike Tristan":1,"Fire Suited Tonoris":1
     }}
   };
   const names = [...new Set(Object.values(regions).flatMap(r => Object.keys(r.data)))].sort();
@@ -519,17 +552,19 @@ function loadFullMeta() {
   const status = document.getElementById('fullMetaStatus');
   const ctx = document.getElementById('chartFull').getContext('2d');
   const data = {
-    "Water Aetherwing Diana": 122, "Wind Seiryuu Guo Jia": 87, "Wind Crux Lorraine": 75,
-    "Fire Oblation Ciel": 57, "Water Genbu Mill Guo Jia": 52, "Fire Suzaku Guo Jia": 48,
-    "Wind Crucible Racoongale Arisanna": 42, "Water Fractals Diao Chan": 30,
-    "Fire Slimes Silvie": 28, "Water Unique Allies Ciel": 27, "Fire Aetherwing Diana": 25,
-    "Wind Shadowstrike Tristan": 33, "Fortuitous Water Exia Jin": 22, "Fire Crux Merlin": 22,
-    "Wind Wake Up": 20, "Fortuitous Wind Arcane Rai": 19, "Serene Fire Luxem Zander": 19,
-    "Serene Wind Astra Arisanna": 18, "Wind Allies Lorraine": 17, "Fire Suited Tonoris": 16,
-    "Serene Water Exia Jin": 14, "Water Tera Kongming": 11, "Wind Hybrid Tristan": 10
+    "Water Aetherwing Diana": 132, "Wind Seiryuu Guo Jia": 95, "Wind Crux Lorraine": 83,
+    "Fire Oblation Ciel": 65, "Water Genbu Mill Guo Jia": 55, "Fire Suzaku Guo Jia": 52,
+    "Wind Crucible Racoongale Arisanna": 47, "Wind Shadowstrike Tristan": 38,
+    "Water Fractals Diao Chan": 35, "Fire Slimes Silvie": 31,
+    "Water Unique Allies Ciel": 29, "Fire Aetherwing Diana": 29, "Fortuitous Water Exia Jin": 29,
+    "Fire Crux Merlin": 22, "Wind Wake Up": 22, "Serene Wind Astra Arisanna": 21,
+    "Fortuitous Wind Arcane Rai": 20, "Serene Fire Luxem Zander": 19,
+    "Fire Suited Tonoris": 18, "Wind Allies Lorraine": 17, "Serene Water Exia Jin": 14,
+    "Water Tera Kongming": 12, "Water Astra Arisanna": 3,
+    "Wind Hybrid Tristan": 10
   };
   const total = Object.values(data).reduce((a, b) => a + b, 0);
-  status.textContent = 'Archetype breakdown across 1,058 players (top 25 shown)';
+  status.textContent = 'Archetype breakdown across 1,172 players (top 25 shown)';
   const sorted = Object.entries(data).sort((a, b) => b[1] - a[1]);
   drawBarChart(ctx, sorted, null, '#1a1a30');
   buildLegend('legendFull', sorted, null);
